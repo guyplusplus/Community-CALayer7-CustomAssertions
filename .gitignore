@@ -28,3 +28,6 @@ tools/asm-commons.jar
 tools/asm.jar
 tools/javac2.jar
 tools/jdom.jar
+StringSimpleTransform/build/classes/icon.stringsimpletransform.32.png
+StringSimpleTransform/build/classes/icon.stringsimpletransform.16.png
+StringSimpleTransform/build/classes/custom_assertions.properties
