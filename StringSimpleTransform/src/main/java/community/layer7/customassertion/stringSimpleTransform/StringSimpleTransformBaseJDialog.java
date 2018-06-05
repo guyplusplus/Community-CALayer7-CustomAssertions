@@ -20,7 +20,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Toolkit;
 
 /**
  * @author Guy Deffaux
@@ -55,7 +54,7 @@ public class StringSimpleTransformBaseJDialog extends JDialog {
 	 */
 	public StringSimpleTransformBaseJDialog() {
 		setResizable(false);
-		setTitle("String Simple Transform Properties - v180604");
+		setTitle("String Simple Transform Properties - v180605");
 		setBounds(100, 100, 400, 213);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
