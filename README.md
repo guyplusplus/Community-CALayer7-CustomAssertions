@@ -18,4 +18,6 @@ This assertion allows simple transformation such as:
 * encore and decode hexadecimal strings in UTF-8 and UTF-16 character sets
 * encode and decode JSON and XML strings
 
+![Dialog Screenshot](/StringSimpleTransform/DialogScreenShot.png)
+
 It has been designed to supported easy addition of a new type without the need of the Custom Assertion SDK. The 'transforms' package is independent and can be compiled without the SDK.
