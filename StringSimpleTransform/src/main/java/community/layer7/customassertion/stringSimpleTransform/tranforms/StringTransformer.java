@@ -7,6 +7,11 @@ import javax.xml.bind.DatatypeConverter;
 /**
  * @author Guy Deffaux
  * June 2018
+ * 
+ * To add a new transformation type:
+ *   - define a new type and create a unique String
+ *   - create a new StringTransformTypeWithLabel with its human readable description, and add it to the array SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY
+ *   - if this transformation shall appear in the combobox tooltip, add the transformType to the array SUPPORTED_TRANSFORMS_IN_COMBOX_TOOLTIP
  */
 public class StringTransformer {
 	
@@ -43,14 +48,18 @@ public class StringTransformer {
 		new StringTransformTypeWithLabel(ENCODE_AS_XML_STRING, "Encode as XML string"),
 	};
 	
-	private static Hashtable<String, StringTransformTypeWithLabel> SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY_HASHTABLE =
-			new Hashtable<String, StringTransformTypeWithLabel>();
+	private static final String SUPPORTED_TRANSFORMS_IN_COMBOX_TOOLTIP[] = new String[] {
+		TRIM, TO_LOWER_CASE, TO_UPPER_CASE,
+		TO_UTF8_HEX, TO_UTF16_HEX,
+		TO_UTF16LE_HEX, TO_UTF16BE_HEX,
+		ENCODE_AS_JSON_STRING, ENCODE_AS_XML_STRING,
+	};
 	
 	private static final String TEST_STRING = " aB\t&\\\u65e51\u0e012";
 	
-	private static final String SUPPORTED_TRANSFORMS_IN_COMBOX_TOOLTIP[] = new String[] {
-		TRIM, TO_LOWER_CASE, TO_UPPER_CASE, TO_UTF8_HEX, TO_UTF16_HEX, TO_UTF16LE_HEX, TO_UTF16BE_HEX, ENCODE_AS_JSON_STRING, ENCODE_AS_XML_STRING
-	};
+	private static Hashtable<String, StringTransformTypeWithLabel> SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY_HASHTABLE =
+			new Hashtable<String, StringTransformTypeWithLabel>();
+	
 	private static String SUPPORTED_TRANSFORMS_COMBOX_TOOLTIP = "";
 			
 	static {
@@ -66,17 +75,6 @@ public class StringTransformer {
 			}
 			sb.append("</ul></html>");
 			SUPPORTED_TRANSFORMS_COMBOX_TOOLTIP = sb.toString();
-//			SUPPORTED_TRANSFORMS_COMBOX_TOOLTIP = "<html>The string '" + TEST_STRING + "' (space, tab, nichi in JP, kokai in TH) gets transformed as:<ul>" +
-//				"<li>" + TRIM + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(TRIM, TEST_STRING)) + "'</li>" +
-//				"<li>" + TO_LOWER_CASE + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(TO_LOWER_CASE, TEST_STRING)) + "'</li>" +
-//				"<li>" + TO_UPPER_CASE + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(TO_UPPER_CASE, TEST_STRING)) + "'</li>" +
-//				"<li>" + TO_UTF8_HEX + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(TO_UTF8_HEX, TEST_STRING)) + "'</li>" +
-//				"<li>" + TO_UTF16_HEX + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(TO_UTF16_HEX, TEST_STRING)) + "'</li>" +
-//				"<li>" + TO_UTF16LE_HEX + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(TO_UTF16LE_HEX, TEST_STRING)) + "'</li>" +
-//				"<li>" + TO_UTF16BE_HEX + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(TO_UTF16BE_HEX, TEST_STRING)) + "'</li>" +
-//				"<li>" + ENCODE_AS_JSON_STRING + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(ENCODE_AS_JSON_STRING, TEST_STRING)) + "'</li>" +
-//				"<li>" + ENCODE_AS_XML_STRING + ": '" + transformString(ENCODE_AS_XML_STRING, transformString(ENCODE_AS_XML_STRING, TEST_STRING)) + "'</li>" +
-//				"</ul></html>";
 		}
 		catch(Exception e) {
 			//impossible
