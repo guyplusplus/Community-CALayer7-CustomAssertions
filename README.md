@@ -13,7 +13,7 @@ To compile the code, simply drop all these directories inside the SDK at the sam
 ## String Simple Transform
 
 This assertion allows simple transformation such as:
-* trim
+* trim spaces
 * to upper case and lower case
 * encore and decode hexadecimal strings in UTF-8 and UTF-16 character sets
 * encode and decode JSON and XML strings
