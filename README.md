@@ -8,8 +8,14 @@ Custom Assertion is the answer to this. It is a great and simple extension mecha
 
 This product is widely deployed, and probably many developers are willing to share their own work.
 
+To compile the code, simply drop all these directories inside the SDK at the same level of the TrafficLoggerSample folder. Then run the build command.
+
 ## String Simple Transform
 
-This assertion allows simple transformation such as trim, to upper case, to lower case. It includes also capability to encode and decode JSON and XML strings.
+This assertion allows simple transformation such as:
+* trim
+* to upper case and lower case
+* encore and decode hexadecimal strings in UTF-8 and UTF-16 character sets
+* encode and decode JSON and XML strings
 
-It has been built so that it is easy expandable without the need of the Custom Assertion SDK. The transforms package is independant and can be compiled without the SDK.
+It has been designed to supported easy addition of a new type without the need of the Custom Assertion SDK. The 'transforms' package is independent and can be compiled without the SDK.
