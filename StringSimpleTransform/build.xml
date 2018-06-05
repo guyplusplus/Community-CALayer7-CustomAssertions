@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="dist" name="StringSimpleTransformCustomAssertion">
+    
+    <!--
+    Define properties
+    -->
+    <property name="package.jar" value="StringSimpleTransformCustomAssertion"/>
+
+    <!-- 
+    Import the common module build script
+    -->
+    <import file="../build-common.xml"/>
+
+</project>
