@@ -2,6 +2,7 @@ package community.layer7.customassertion.stringSimpleTransform;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultComboBoxModel;
 
@@ -19,6 +20,7 @@ import community.layer7.customassertion.stringSimpleTransform.tranforms.StringTr
 public class StringSimpleTransformJDialog extends StringSimpleTransformBaseJDialog implements AssertionEditor {
 
 	private static final long serialVersionUID = -1660969099465344485L;
+    private static final Logger logger = Logger.getLogger(StringSimpleTransformJDialog.class.getName());
 	private StringSimpleTransformCustomAssertion stringSimpleTransformCustomAssertion;
 	private AssertionEditorSupport editorSupport;
 	
@@ -29,16 +31,28 @@ public class StringSimpleTransformJDialog extends StringSimpleTransformBaseJDial
 		Image dialogIconImage = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("icon.stringsimpletransform.32.png"));
 		if(dialogIconImage != null)
 			super.setIconImage(dialogIconImage);
+		//set intut textfield
 		super.getInputVariableTextField().setText(customAssertion.getInputVariable());
+		//set output textfield
 		super.getOutputVariableTextField().setText(customAssertion.getOutputVariable());
+		//set combox
 		super.getTransformationTypeComboBox().setModel(new DefaultComboBoxModel(StringTransformer.getSupportedTransformsWithLabelArray()));
+		//set tooltip
 		super.getTransformationTypeComboBox().setToolTipText(StringTransformer.getSupportedTransformsComboBoxTooltip());
 		//by default select 1 item in the list
-		if(customAssertion.getTransformationType() == null || customAssertion.getTransformationType().length() == 0)
+		String transformationType = customAssertion.getTransformationType();
+		if(transformationType == null || transformationType.length() == 0)
 			super.getTransformationTypeComboBox().setSelectedItem(0);
-		else
-			super.getTransformationTypeComboBox().setSelectedItem(
-					StringTransformer.getSupportedTransformsWithLabel(customAssertion.getTransformationType()));
+		else {
+			StringTransformTypeWithLabel typeWithLabel = StringTransformer.getSupportedTransformsWithLabel(customAssertion.getTransformationType());
+			if(typeWithLabel == null) {
+				//play safe by showing the first transformationType. Then user can change it to a known type
+				logger.warning("Unknown transformationType: " + transformationType);
+				super.getTransformationTypeComboBox().setSelectedItem(0);
+			}
+			else
+				super.getTransformationTypeComboBox().setSelectedItem(typeWithLabel);
+		}
 	}
 
 	@Override
