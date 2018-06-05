@@ -5,5 +5,4 @@ build.cmd
 build.sh
 build.xml
 lib/**
-lib/com.l7tech/layer7-api-8.2.00.jar
 tools/**
