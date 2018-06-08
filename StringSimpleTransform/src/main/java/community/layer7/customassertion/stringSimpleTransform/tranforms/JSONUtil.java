@@ -13,74 +13,46 @@ import java.io.Writer;
 public class JSONUtil {
 	
     public static String quote(String string) {
-        StringWriter sw = new StringWriter();
-        synchronized (sw.getBuffer()) {
-            try {
-                return quote(string, sw).toString();
-            } catch (IOException ignored) {
-                // will never happen - we are writing to a string writer
-                return "";
-            }
-        }
-    }
-
-    public static Writer quote(String string, Writer w) throws IOException {
-        if (string == null || string.length() == 0) {
-            //w.write("\"\"");
-            return w;
-        }
-
-        char b;
-        char c = 0;
-        String hhhh;
-        int i;
+        if (string == null)
+            return null;
+    	StringBuilder sb = new StringBuilder();
         int len = string.length();
-
-        //w.write('"');
-        for (i = 0; i < len; i += 1) {
-            b = c;
-            c = string.charAt(i);
+        for (int i = 0; i < len; i += 1) {
+            char c = string.charAt(i);
             switch (c) {
             case '\\':
             case '"':
-                w.write('\\');
-                w.write(c);
-                break;
             case '/':
-                if (b == '<') {
-                    w.write('\\');
-                }
-                w.write(c);
+                sb.append('\\');
+                sb.append(c);
                 break;
             case '\b':
-                w.write("\\b");
+                sb.append("\\b");
                 break;
             case '\t':
-                w.write("\\t");
+                sb.append("\\t");
                 break;
             case '\n':
-                w.write("\\n");
+                sb.append("\\n");
                 break;
             case '\f':
-                w.write("\\f");
+                sb.append("\\f");
                 break;
             case '\r':
-                w.write("\\r");
+                sb.append("\\r");
                 break;
             default:
-                if (c < ' ' || (c >= '\u0080' && c < '\u00a0')
-                        || (c >= '\u2000' && c < '\u2100')) {
-                    w.write("\\u");
-                    hhhh = Integer.toHexString(c);
-                    w.write("0000", 0, 4 - hhhh.length());
-                    w.write(hhhh);
+                if (c < ' ') {
+                    sb.append("\\u");
+                    String hhhh = Integer.toHexString(c);
+                    sb.append("0000", 0, 4 - hhhh.length());
+                    sb.append(hhhh);
                 } else {
-                    w.write(c);
+                    sb.append(c);
                 }
             }
         }
-        //w.write('"');
-        return w;
+        return sb.toString();
     }
     
     public static String JSONStringToString(String jsonString) throws UnsupportedEncodingException {
@@ -90,16 +62,11 @@ public class JSONUtil {
         for (int i = 0; i < len; i++) {
             c = jsonString.charAt(i);
             switch (c) {
-            case 0:
-            case '\n':
-            case '\r':
-                throw new UnsupportedEncodingException("Unterminated string");
             case '\\':
             	i++;
             	if(i >= len)
             		throw new UnsupportedEncodingException("Missing escape character");
-            	else
-            		c = jsonString.charAt(i);
+            	c = jsonString.charAt(i);
                 switch (c) {
                 case 'b':
                     sb.append('\b');
@@ -127,7 +94,6 @@ public class JSONUtil {
                     }
                     break;
                 case '"':
-                case '\'':
                 case '\\':
                 case '/':
                     sb.append(c);
