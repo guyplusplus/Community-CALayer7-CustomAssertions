@@ -187,7 +187,7 @@ public class StringTransformer {
 		try {
 			input = "A\u001e&\u001f'\u0020B\ufffeC\u0000D";
 			System.out.println(input + "." + ENCODE_AS_XML_STRING + "=" + transformString(ENCODE_AS_XML_STRING, input));
-			System.out.println("Via COMMON LANG: " + org.apache.commons.text.StringEscapeUtils.escapeXml11(input));
+			//System.out.println("Via COMMON LANG:            " + org.apache.commons.text.StringEscapeUtils.escapeXml11(input));
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);
 		}
@@ -204,7 +204,7 @@ public class StringTransformer {
 			System.out.println("Exception: " + e);
 		}
 		try {
-			input = "A\\u0032B\\u0e01C\\tD\\'E\\\"F";
+			input = "A\\u0032B\\u0e01C\\tDE\\\\F\\\"G";
 			String decoded = transformString(DECODE_JSON_STRING, input);
 			System.out.println(input + "." + DECODE_JSON_STRING + "=" + decoded);
 			System.out.println(decoded + "." + TO_UTF16_HEX + "=" + transformString(TO_UTF16_HEX, decoded));
@@ -214,6 +214,12 @@ public class StringTransformer {
 		try {
 			input = "A\\u0032B\\u0e";
 			System.out.println(input + "." + DECODE_JSON_STRING + "=" + transformString(DECODE_JSON_STRING, input));
+		} catch (Exception e) {
+			System.out.println("Exception: " + e);
+		}
+		try {
+			input = "A\\B'C\"D/E	F\u0003G\u0019H\u0000I\1111J";
+			System.out.println(input + "." + ENCODE_AS_JSON_STRING + "=" + transformString(ENCODE_AS_JSON_STRING, input));
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);
 		}
