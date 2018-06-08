@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class StringSimpleTransformServiceInvocation extends ServiceInvocation {
     private static final Logger logger = Logger.getLogger(StringSimpleTransformServiceInvocation.class.getName());
-    private StringSimpleTransformCustomAssertion data;
+    private StringSimpleTransformCustomAssertion stringSimpleTransformCustomAssertion;
     private String input;
     private String transformationType;
 
@@ -27,9 +27,9 @@ public class StringSimpleTransformServiceInvocation extends ServiceInvocation {
                     (customAssertion == null ? "null" : customAssertion.getClass().getName())));
         	return CustomAssertionStatus.FAILED;        		    		
     	}
-        data = (StringSimpleTransformCustomAssertion)customAssertion;
-        if (data.getInputVariable() != null) {
-        	Object inputAsObject = customPolicyContext.getVariable(data.getInputVariable());
+        stringSimpleTransformCustomAssertion = (StringSimpleTransformCustomAssertion)customAssertion;
+        if (stringSimpleTransformCustomAssertion.getInputVariable() != null) {
+        	Object inputAsObject = customPolicyContext.getVariable(stringSimpleTransformCustomAssertion.getInputVariable());
         	if(inputAsObject == null) { //such as using undefined variable or InputVariable is empty
         		//we pick the gentle approach : use empty s
         		inputAsObject = "";
@@ -38,7 +38,7 @@ public class StringSimpleTransformServiceInvocation extends ServiceInvocation {
             	//return CustomAssertionStatus.FAILED;        		
         	}
         	if(!(inputAsObject instanceof String)) {
-            	logger.log(Level.WARNING, "Input value is not a String object, but a " + inputAsObject.getClass().getSimpleName());
+            	logger.log(Level.WARNING, "Input value is not a String object, but a " + inputAsObject.getClass().getName());
             	return CustomAssertionStatus.FAILED;        		
         	}
         	input = (String)inputAsObject;
@@ -46,15 +46,15 @@ public class StringSimpleTransformServiceInvocation extends ServiceInvocation {
         	logger.log(Level.WARNING, "InputVariable is not defined");
         	return CustomAssertionStatus.FAILED;
         }
-        if (data.getTransformationType() != null)
-        	transformationType = data.getTransformationType();
+        if (stringSimpleTransformCustomAssertion.getTransformationType() != null)
+        	transformationType = stringSimpleTransformCustomAssertion.getTransformationType();
         else {
         	logger.log(Level.WARNING, "transformationType is not defined");
         	return CustomAssertionStatus.FAILED;
         }
         try {
             String output = StringTransformer.transformString(transformationType, input);
-            customPolicyContext.setVariable(data.getOutputVariable(), output);
+            customPolicyContext.setVariable(stringSimpleTransformCustomAssertion.getOutputVariable(), output);
         }
         catch(Exception e) {
         	logger.log(Level.WARNING, "Failed to transform, error: " + e); //no need stack trace
