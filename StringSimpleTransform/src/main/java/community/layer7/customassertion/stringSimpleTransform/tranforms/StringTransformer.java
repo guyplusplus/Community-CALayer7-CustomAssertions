@@ -185,8 +185,9 @@ public class StringTransformer {
 			System.out.println("Exception: " + e);
 		}
 		try {
-			input = "A\u001eB";
+			input = "A\u001e&\u001f'\u0020B\ufffeC\u0000D";
 			System.out.println(input + "." + ENCODE_AS_XML_STRING + "=" + transformString(ENCODE_AS_XML_STRING, input));
+			System.out.println("Via COMMON LANG: " + org.apache.commons.text.StringEscapeUtils.escapeXml11(input));
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);
 		}
