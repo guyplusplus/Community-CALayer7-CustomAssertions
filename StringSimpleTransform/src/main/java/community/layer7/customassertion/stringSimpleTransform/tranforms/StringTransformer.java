@@ -215,7 +215,19 @@ public class StringTransformer {
 			input = "A\\u0032B\\u0e";
 			System.out.println(input + "." + DECODE_JSON_STRING + "=" + transformString(DECODE_JSON_STRING, input));
 		} catch (Exception e) {
-			System.out.println("Exception: " + e);
+			System.out.println("GOOD Exception: " + e);
+		}
+		try {
+			input = "A\\u00egB";
+			System.out.println(input + "." + DECODE_JSON_STRING + "=" + transformString(DECODE_JSON_STRING, input));
+		} catch (Exception e) {
+			System.out.println("GOOD Exception: " + e);
+		}
+		try {
+			input = "A\\@B";
+			System.out.println(input + "." + DECODE_JSON_STRING + "=" + transformString(DECODE_JSON_STRING, input));
+		} catch (Exception e) {
+			System.out.println("GOOD Exception: " + e);
 		}
 		try {
 			input = "A\\B'C\"D/E	F\u0003G\u0019H\u0000I\1111J";
