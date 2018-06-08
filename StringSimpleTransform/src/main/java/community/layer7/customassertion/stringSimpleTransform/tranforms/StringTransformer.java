@@ -67,7 +67,7 @@ public class StringTransformer {
 			for(StringTransformTypeWithLabel stringTransformTypeWithLabel:SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY)
 				SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY_HASHTABLE.put(stringTransformTypeWithLabel.getTransformType(), stringTransformTypeWithLabel);				
 			//each entry requires ENCODE_AS_XML_STRING since it is a HTML based tooltip
-			StringBuffer sb = new StringBuffer("<html>The string '").append(TEST_STRING).append("' (space, tab, nichi in JP, kokai in TH) gets transformed as:<ul>");
+			StringBuilder sb = new StringBuilder("<html>The string '").append(TEST_STRING).append("' (space, tab, nichi in JP, kokai in TH) gets transformed as:<ul>");
 			for(String supportedTransform:SUPPORTED_TRANSFORMS_IN_COMBOX_TOOLTIP) {
 				sb.append("<li>").append(getSupportedTransformsWithLabel(supportedTransform).getLabel()).append(": '");
 				sb.append(transformString(ENCODE_AS_XML_STRING, transformString(supportedTransform, TEST_STRING)));
