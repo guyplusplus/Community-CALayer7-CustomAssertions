@@ -27,11 +27,7 @@ public class StringTransformerTest {
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, "4a"), "J");
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, "4A"), "J");
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF16_HEX, "00450e010046"), "E\u0e01F");
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-			assertTrue(false);
-		}
-		try {
+
 			input = StringTransformer.TOOLTIP_TEST_STRING;
 			assertEquals(StringTransformer.transformString(StringTransformer.TRIM, input), "aB\t&\\\u65e51\u0e012");
 			assertEquals(StringTransformer.transformString(StringTransformer.TO_LOWER_CASE, input), " ab\t&\\\u65e51\u0e012");
@@ -59,11 +55,18 @@ public class StringTransformerTest {
 			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_JSON_STRING, "A\\B'C\"D/E	F\u0003G\u0019H\u0000I\1111J"), "A\\\\B'C\\\"D\\/E\\tF\\u0003G\\u0019H\\u0000II1J");;
 			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_XML_STRING, "A&#x0e01;&amp;&apos; B&#33;C"), "A\u0e01&' B!C");;
 
+			input = StringTransformer.TOOLTIP_TEST_STRING + " & &amp; \\ \\\\ \t ' \\' \" \\\" &#33; &amp;#33; &#x0e01; &amp;#x0e01; \n \\n / \\/ "; // \f and \r \b are problems
+			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_XML_STRING, StringTransformer.transformString(StringTransformer.ENCODE_AS_XML10_STRING, input)), input);
+			input += " \f \\f \r \\r \b \\b ";
+			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_JSON_STRING, StringTransformer.transformString(StringTransformer.ENCODE_AS_JSON_STRING, input)), input);
+			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_XML_STRING, StringTransformer.transformString(StringTransformer.ENCODE_AS_XML11_STRING, input)), input);
+
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);
 			assertTrue(false);
 		}
 
+		//section of tests that trigger exception
 		try {
 			StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, "GG");
 			assertTrue(false);
