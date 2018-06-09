@@ -11,4 +11,14 @@
     -->
     <import file="../build-common.xml"/>
 
+    <path id="stringsimpletransformation.classpath">
+        <path refid="l7tech.api.classpath"/>
+        <pathelement path="${src.main.resources.dir}/lib/commons-lang3-3.7.jar"/>
+        <pathelement path="${src.main.resources.dir}/lib/commons-text-1.3.jar"/>
+    </path>
+
+    <path id="javac.classpath">
+        <path refid="stringsimpletransformation.classpath"/>
+    </path>
+
 </project>
