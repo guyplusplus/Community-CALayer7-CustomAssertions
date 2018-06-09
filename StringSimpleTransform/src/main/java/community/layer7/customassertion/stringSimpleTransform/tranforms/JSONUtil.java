@@ -1,60 +1,13 @@
 package community.layer7.customassertion.stringSimpleTransform.tranforms;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 
 /**'
- * @author JSON.org
- * contributor: Guy Deffaux
+ * @author Guy Deffaux
  * @version 2016-08-15
  */
 public class JSONUtil {
 	
-    public static String quote(String string) {
-        if (string == null)
-            return null;
-    	StringBuilder sb = new StringBuilder();
-        int len = string.length();
-        for (int i = 0; i < len; i += 1) {
-            char c = string.charAt(i);
-            switch (c) {
-            case '\\':
-            case '"':
-            case '/':
-                sb.append('\\');
-                sb.append(c);
-                break;
-            case '\b':
-                sb.append("\\b");
-                break;
-            case '\t':
-                sb.append("\\t");
-                break;
-            case '\n':
-                sb.append("\\n");
-                break;
-            case '\f':
-                sb.append("\\f");
-                break;
-            case '\r':
-                sb.append("\\r");
-                break;
-            default:
-                if (c < ' ') {
-                    sb.append("\\u");
-                    String hhhh = Integer.toHexString(c);
-                    sb.append("0000", 0, 4 - hhhh.length());
-                    sb.append(hhhh);
-                } else {
-                    sb.append(c);
-                }
-            }
-        }
-        return sb.toString();
-    }
-    
     public static String JSONStringToString(String jsonString) throws UnsupportedEncodingException {
     	int len = jsonString.length();
         char c;
