@@ -4,6 +4,8 @@ import java.util.Hashtable;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 /**
  * @author Guy Deffaux
  * June 2018
@@ -16,21 +18,26 @@ import javax.xml.bind.DatatypeConverter;
 public class StringTransformer {
 	
 	//DO NOT CHANGE the string values or it will break currently deployed assertions
-	private static final String TRIM = "trim";
-	private static final String TO_LOWER_CASE = "toLowerCase";
-	private static final String TO_UPPER_CASE = "toUpperCase";
-	private static final String TO_UTF8_HEX = "toUTF8Hex";
-	private static final String FROM_UTF8_HEX = "fromUTF8Hex";
-	private static final String TO_UTF16_HEX = "toUTF16Hex";
-	private static final String FROM_UTF16_HEX = "fromUTF16Hex";
-	private static final String TO_UTF16LE_HEX = "toUTF16LEHex";
-	private static final String FROM_UTF16LE_HEX = "fromUTF16LEHex";
-	private static final String TO_UTF16BE_HEX = "toUTF16BEHex";
-	private static final String FROM_UTF16BE_HEX = "fromUTF16BEHex";
-	private static final String ENCODE_AS_JSON_STRING = "encodeAsJSONString";
-	private static final String DECODE_JSON_STRING = "decodeJSONString";
-	private static final String ENCODE_AS_XML_STRING = "encodeAsXMLString";
+	//these variables are available within package for the test class
+	static final String TRIM = "trim";
+	static final String TO_LOWER_CASE = "toLowerCase";
+	static final String TO_UPPER_CASE = "toUpperCase";
+	static final String TO_UTF8_HEX = "toUTF8Hex";
+	static final String FROM_UTF8_HEX = "fromUTF8Hex";
+	static final String TO_UTF16_HEX = "toUTF16Hex";
+	static final String FROM_UTF16_HEX = "fromUTF16Hex";
+	static final String TO_UTF16LE_HEX = "toUTF16LEHex";
+	static final String FROM_UTF16LE_HEX = "fromUTF16LEHex";
+	static final String TO_UTF16BE_HEX = "toUTF16BEHex";
+	static final String FROM_UTF16BE_HEX = "fromUTF16BEHex";
+	static final String ENCODE_AS_JSON_STRING = "encodeAsJSONString";
+	static final String DECODE_JSON_STRING = "decodeJSONString";
+	static final String ENCODE_AS_XML10_STRING = "encodeAsXML10String";
+	static final String ENCODE_AS_XML11_STRING = "encodeAsXML11String";
+	static final String DECODE_XML_STRING = "decodeXMLString";
 	
+	static final String TOOLTIP_TEST_STRING = " aB\t&\\\u65e51\u0e012";
+
 	private static final StringTransformTypeWithLabel[] SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY = new StringTransformTypeWithLabel[] {
 		new StringTransformTypeWithLabel(TRIM, "Trim spaces"),
 		new StringTransformTypeWithLabel(TO_LOWER_CASE, "To lower case"),
@@ -45,18 +52,18 @@ public class StringTransformer {
 		new StringTransformTypeWithLabel(FROM_UTF16BE_HEX, "From UTF-16BE Hex"),
 		new StringTransformTypeWithLabel(ENCODE_AS_JSON_STRING, "Encode as JSON string"),
 		new StringTransformTypeWithLabel(DECODE_JSON_STRING, "Decode JSON string"),
-		new StringTransformTypeWithLabel(ENCODE_AS_XML_STRING, "Encode as XML string"),
+		new StringTransformTypeWithLabel(ENCODE_AS_XML10_STRING, "Encode as XML 1.0 string"),
+		new StringTransformTypeWithLabel(ENCODE_AS_XML11_STRING, "Encode as XML 1.1 string"),
+		new StringTransformTypeWithLabel(DECODE_XML_STRING, "Decode XML string"),
 	};
 	
 	private static final String SUPPORTED_TRANSFORMS_IN_COMBOX_TOOLTIP[] = new String[] {
 		TRIM, TO_LOWER_CASE, TO_UPPER_CASE,
 		TO_UTF8_HEX, TO_UTF16_HEX,
 		TO_UTF16LE_HEX, TO_UTF16BE_HEX,
-		ENCODE_AS_JSON_STRING, ENCODE_AS_XML_STRING,
+		ENCODE_AS_JSON_STRING, ENCODE_AS_XML10_STRING,
 	};
-	
-	private static final String TEST_STRING = " aB\t&\\\u65e51\u0e012";
-	
+		
 	private static Hashtable<String, StringTransformTypeWithLabel> SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY_HASHTABLE =
 			new Hashtable<String, StringTransformTypeWithLabel>();
 	
@@ -67,10 +74,10 @@ public class StringTransformer {
 			for(StringTransformTypeWithLabel stringTransformTypeWithLabel:SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY)
 				SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY_HASHTABLE.put(stringTransformTypeWithLabel.getTransformType(), stringTransformTypeWithLabel);				
 			//each entry requires ENCODE_AS_XML_STRING since it is a HTML based tooltip
-			StringBuilder sb = new StringBuilder("<html>The string '").append(TEST_STRING).append("' (space, tab, nichi in JP, kokai in TH) gets transformed as:<ul>");
+			StringBuilder sb = new StringBuilder("<html>The string '").append(TOOLTIP_TEST_STRING).append("' (space, tab, nichi in JP, kokai in TH) gets transformed as:<ul>");
 			for(String supportedTransform:SUPPORTED_TRANSFORMS_IN_COMBOX_TOOLTIP) {
 				sb.append("<li>").append(getSupportedTransformsWithLabel(supportedTransform).getLabel()).append(": '");
-				sb.append(transformString(ENCODE_AS_XML_STRING, transformString(supportedTransform, TEST_STRING)));
+				sb.append(transformString(ENCODE_AS_XML10_STRING, transformString(supportedTransform, TOOLTIP_TEST_STRING)));
 				sb.append("'</li>");
 			}
 			sb.append("</ul></html>");
@@ -112,11 +119,17 @@ public class StringTransformer {
 		case FROM_UTF16BE_HEX:
 			return new String(DatatypeConverter.parseHexBinary(inputString), "UTF-16BE");
 		case ENCODE_AS_JSON_STRING:
-			return JSONUtil.quote(inputString);
+			return StringEscapeUtils.escapeJson(inputString);
 		case DECODE_JSON_STRING:
 			return JSONUtil.JSONStringToString(inputString);
-		case ENCODE_AS_XML_STRING:
-			return XMLUtil.escapeXML(inputString);
+			//waiting for commons text 1.4. V1.3 does not unescape ", / and \
+			//return StringEscapeUtils.unescapeJson(inputString);
+		case ENCODE_AS_XML10_STRING:
+			return StringEscapeUtils.escapeXml10(inputString);
+		case ENCODE_AS_XML11_STRING:
+			return StringEscapeUtils.escapeXml11(inputString);
+		case DECODE_XML_STRING:
+			return StringEscapeUtils.unescapeXml(inputString);
 		}
 		throw new Exception("Unknow transformationType: " + transformationType);
 	}
@@ -131,109 +144,5 @@ public class StringTransformer {
 	
 	public static String getSupportedTransformsComboBoxTooltip() {
 		return SUPPORTED_TRANSFORMS_COMBOX_TOOLTIP;
-	}
-	
-	public static void main(String[] args) {
-		//test code
-		String input = null;
-		try {
-			input = "";
-			System.out.println(input + "." + TO_UTF8_HEX + "=" + transformString(TO_UTF8_HEX, input));
-			System.out.println(input + "." + FROM_UTF8_HEX + "=" + transformString(FROM_UTF8_HEX, input));
-			input = "45";
-			System.out.println(input + "." + FROM_UTF8_HEX + "=" + transformString(FROM_UTF8_HEX, input));			
-			input = "4a";
-			System.out.println(input + "." + FROM_UTF8_HEX + "=" + transformString(FROM_UTF8_HEX, input));			
-			input = "4A";
-			System.out.println(input + "." + FROM_UTF8_HEX + "=" + transformString(FROM_UTF8_HEX, input));			
-			input = "00450e010046";
-			System.out.println(input + "." + FROM_UTF16_HEX + "=" + transformString(FROM_UTF16_HEX, input));			
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			input = "GG";
-			System.out.println(input + "." + TO_UTF8_HEX + "=" + transformString(TO_UTF8_HEX, input));
-			System.out.println(input + "." + FROM_UTF8_HEX + "=" + transformString(FROM_UTF8_HEX, input));
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			input = null;
-			System.out.println(input + "." + TO_UTF8_HEX + "=" + transformString(TO_UTF8_HEX, input));
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			input = "00";
-			System.out.println(input + ".null=" + transformString(null, input));
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			input = TEST_STRING;
-			System.out.println(input + "." + TRIM + "=" + transformString(TRIM, input));
-			System.out.println(input + "." + TO_LOWER_CASE + "=" + transformString(TO_LOWER_CASE, input));
-			System.out.println(input + "." + TO_UPPER_CASE + "=" + transformString(TO_UPPER_CASE, input));
-			System.out.println(input + "." + TO_UTF8_HEX + "=" + transformString(TO_UTF8_HEX, input));
-			System.out.println(input + "." + TO_UTF16_HEX + "=" + transformString(TO_UTF16_HEX, input));
-			System.out.println(input + "." + TO_UTF16LE_HEX + "=" + transformString(TO_UTF16LE_HEX, input));
-			System.out.println(input + "." + TO_UTF16BE_HEX + "=" + transformString(TO_UTF16BE_HEX, input));
-			System.out.println(input + "." + ENCODE_AS_JSON_STRING + "=" + transformString(ENCODE_AS_JSON_STRING, input));
-			System.out.println(input + "." + ENCODE_AS_XML_STRING + "=" + transformString(ENCODE_AS_XML_STRING, input));
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			input = "A\u001e&\u001f'\u0020B\ufffeC\u0000D";
-			System.out.println(input + "." + ENCODE_AS_XML_STRING + "=" + transformString(ENCODE_AS_XML_STRING, input));
-			//System.out.println("Via COMMON LANG:            " + org.apache.commons.text.StringEscapeUtils.escapeXml11(input));
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			input = TEST_STRING;
-			String jsonString = transformString(ENCODE_AS_JSON_STRING, input);
-			System.out.println(input + "." + ENCODE_AS_JSON_STRING + "=" + jsonString);
-			String decoded = transformString(DECODE_JSON_STRING, jsonString);
-			System.out.println(jsonString + "." + DECODE_JSON_STRING + "=" + decoded);
-			System.out.println("input == decoded ? " + (input.equals(decoded)));
-			System.out.println(input + "." + TO_UTF16_HEX + "=" + transformString(TO_UTF16_HEX, input));
-			System.out.println(decoded + "." + TO_UTF16_HEX + "=" + transformString(TO_UTF16_HEX, decoded));
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			input = "A\\u0032B\\u0e01C\\tDE\\\\F\\\"G";
-			String decoded = transformString(DECODE_JSON_STRING, input);
-			System.out.println(input + "." + DECODE_JSON_STRING + "=" + decoded);
-			System.out.println(decoded + "." + TO_UTF16_HEX + "=" + transformString(TO_UTF16_HEX, decoded));
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			input = "A\\u0032B\\u0e";
-			System.out.println(input + "." + DECODE_JSON_STRING + "=" + transformString(DECODE_JSON_STRING, input));
-		} catch (Exception e) {
-			System.out.println("GOOD Exception: " + e);
-		}
-		try {
-			input = "A\\u00egB";
-			System.out.println(input + "." + DECODE_JSON_STRING + "=" + transformString(DECODE_JSON_STRING, input));
-		} catch (Exception e) {
-			System.out.println("GOOD Exception: " + e);
-		}
-		try {
-			input = "A\\@B";
-			System.out.println(input + "." + DECODE_JSON_STRING + "=" + transformString(DECODE_JSON_STRING, input));
-		} catch (Exception e) {
-			System.out.println("GOOD Exception: " + e);
-		}
-		try {
-			input = "A\\B'C\"D/E	F\u0003G\u0019H\u0000I\1111J";
-			System.out.println(input + "." + ENCODE_AS_JSON_STRING + "=" + transformString(ENCODE_AS_JSON_STRING, input));
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
 	}
 }
