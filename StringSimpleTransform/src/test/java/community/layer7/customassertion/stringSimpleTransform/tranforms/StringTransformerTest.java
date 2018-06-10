@@ -18,9 +18,27 @@ public class StringTransformerTest {
 	public void TestEncodings() {
 		String input = null;
 		try {
+			//test empty string
 			assertEquals(StringTransformer.transformString(StringTransformer.TRIM, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.TO_LOWER_CASE, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.TO_UPPER_CASE, ""), "");
 			assertEquals(StringTransformer.transformString(StringTransformer.TO_UTF8_HEX, ""), "");
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.TO_UTF16_HEX, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF16_HEX, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.TO_UTF16BE_HEX, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF16BE_HEX, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.TO_UTF16LE_HEX, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF16LE_HEX, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_XML10_STRING, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_XML11_STRING, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_XML_STRING, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_JSON_STRING, ""), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_JSON_STRING, ""), "");
+			
+			//few simple cases
+			assertEquals(StringTransformer.transformString(StringTransformer.TRIM, " "), "");
+			assertEquals(StringTransformer.transformString(StringTransformer.TRIM, "\t"), "");
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, "45"), "E");
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, "4a"), "J");
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, "4A"), "J");
@@ -30,6 +48,7 @@ public class StringTransformerTest {
 			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_JSON_STRING, "A\\B'C\"D/E	F\u0003G\u0019H\u0000I\1111J"), "A\\\\B'C\\\"D\\/E\\tF\\u0003G\\u0019H\\u0000II1J");;
 			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_JSON_STRING, "A\\u0032B\\u0e01C\\tDE\\\\F\\\"G"), "A2B\u0e01C\tDE\\F\"G");
 
+			//test all TO
 			input = " aB\t&\\\u65e5 \u0e01 1"; //not use StringTransformer.TOOLTIP_TEST_STRING since this string can change anytime
 			assertEquals(StringTransformer.transformString(StringTransformer.TRIM, input), "aB\t&\\\u65e5 \u0e01 1");
 			assertEquals(StringTransformer.transformString(StringTransformer.TO_LOWER_CASE, input), " ab\t&\\\u65e5 \u0e01 1");
@@ -41,7 +60,7 @@ public class StringTransformerTest {
 			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_JSON_STRING, input), " aB\\t&\\\\\u65E5 \u0E01 1");
 			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_XML10_STRING, input), " aB	&amp;\\\u65e5 \u0e01 1");
 			
-			//ensure all round trip decode(encode) work
+			//ensure all round trip decode(encode) work with a long complex case
 			input = StringTransformer.TOOLTIP_TEST_STRING + " & &amp; \\ \\\\ \t ' \\' \" \\\" &#33; &amp;#33; &#x0e01; &amp;#x0e01; \n \\n / \\/ ";
 			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_XML_STRING, StringTransformer.transformString(StringTransformer.ENCODE_AS_XML10_STRING, input)), input);
 			input += " \f \\f \r \\r \b \\b ";  // \f and \r \b are problems on XML 1.0
