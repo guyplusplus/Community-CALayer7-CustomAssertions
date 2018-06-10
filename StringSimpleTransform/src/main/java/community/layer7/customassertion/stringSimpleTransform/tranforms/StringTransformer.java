@@ -36,7 +36,7 @@ public class StringTransformer {
 	static final String ENCODE_AS_XML11_STRING = "encodeAsXML11String";
 	static final String DECODE_XML_STRING = "decodeXMLString";
 	
-	static final String TOOLTIP_TEST_STRING = " aB\t&\\\u65e51\u0e012";
+	static final String TOOLTIP_TEST_STRING = " aB\t&\\\u65e5 \u0e01 1";
 
 	private static final StringTransformTypeWithLabel[] SUPPORTED_TRANSFORMS_WITH_LABEL_ARRAY = new StringTransformTypeWithLabel[] {
 		new StringTransformTypeWithLabel(TRIM, "Trim spaces"),
@@ -119,7 +119,8 @@ public class StringTransformer {
 		case FROM_UTF16BE_HEX:
 			return new String(DatatypeConverter.parseHexBinary(inputString), "UTF-16BE");
 		case ENCODE_AS_JSON_STRING:
-			return StringEscapeUtils.escapeJson(inputString);
+			//return StringEscapeUtils.escapeJson(inputString);
+			return JSONUtil.encodeJSON(inputString);
 		case DECODE_JSON_STRING:
 			return JSONUtil.JSONStringToString(inputString);
 			//waiting for commons text 1.4. V1.3 does not unescape ", / and \
