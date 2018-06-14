@@ -1,6 +1,6 @@
 # Community-CALayer7-CustomAssertions
 
-This repository is for the community to create and develop new Custom Assertions to be deployed on the CA Layer7 API Gateway.
+This repository is for the community to create and develop new Custom Assertions that will be deployed on the CA Layer7 API Gateway.
 
 Layer7 API Gateway is a fine tool, though a number of features are not available, and custom script assertion is still not there as of v9.3. While it is often possible to implement these feature via Regular Expression or XSLT, it is often inelegant and slow.
 
@@ -16,8 +16,8 @@ This assertion allows simple transformation such as:
 * trim spaces
 * to upper case and lower case
 * encore and decode hexadecimal strings in UTF-8 and UTF-16 character sets
-* encode and decode JSON and XML strings
+* encode and decode JSON and XML 1.0 and 1.1 strings
 
 ![Dialog Screenshot](/StringSimpleTransform/DialogScreenShot.png)
 
-It has been designed to supported easy addition of a new type without the need of the Custom Assertion SDK. The 'transforms' package is independent and can be compiled without the SDK.
+It has been designed to support easy addition of a new type transformation without the need of the Custom Assertion SDK. The 'transforms' package is independent and can be compiled without the SDK.
