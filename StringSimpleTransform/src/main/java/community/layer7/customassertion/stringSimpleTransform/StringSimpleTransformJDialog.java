@@ -31,6 +31,8 @@ public class StringSimpleTransformJDialog extends StringSimpleTransformBaseJDial
 		Image dialogIconImage = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("icon.stringsimpletransform.32.png"));
 		if(dialogIconImage != null)
 			super.setIconImage(dialogIconImage);
+		//register ESC key
+		registerESCKey();
 		//set intut textfield
 		super.getInputVariableTextField().setText(customAssertion.getInputVariable());
 		//set output textfield
@@ -71,11 +73,18 @@ public class StringSimpleTransformJDialog extends StringSimpleTransformBaseJDial
 	}
 	
 	@Override
-	protected void okClicked() {
+	protected void onCancel() {
+		editorSupport.fireCancelled(stringSimpleTransformCustomAssertion);
+		dispose();
+	}
+	
+	@Override
+	protected void onOK() {
 		stringSimpleTransformCustomAssertion.setInputVariable(super.getInputVariableTextField().getText());
 		stringSimpleTransformCustomAssertion.setOutputVariable(super.getOutputVariableTextField().getText());
 		stringSimpleTransformCustomAssertion.setTransformationType(
 				((StringTransformTypeWithLabel)super.getTransformationTypeComboBox().getSelectedItem()).getTransformType());
 		editorSupport.fireEditAccepted(stringSimpleTransformCustomAssertion);
+		dispose();
 	}
 }
