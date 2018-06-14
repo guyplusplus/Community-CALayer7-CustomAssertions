@@ -12,12 +12,20 @@ import community.layer7.customassertion.stringSimpleTransform.tranforms.StringTr
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.SwingConstants;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.InputMap;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -39,10 +47,11 @@ public class StringSimpleTransformBaseJDialog extends JDialog {
 	public static void main(String[] args) {
 		try {
 			StringSimpleTransformBaseJDialog dialog = new StringSimpleTransformBaseJDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			//additional lines added for test
 			dialog.getTransformationTypeComboBox().setModel(new DefaultComboBoxModel(StringTransformer.getSupportedTransformsWithLabelArray()));
 			dialog.getTransformationTypeComboBox().setToolTipText(StringTransformer.getSupportedTransformsComboBoxTooltip());
+			//prepare then open dialog
+			dialog.registerESCKey();
 			dialog.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -53,8 +62,9 @@ public class StringSimpleTransformBaseJDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public StringSimpleTransformBaseJDialog() {
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
-		setTitle("String Simple Transform Properties - v180608");
+		setTitle("String Simple Transform Properties - v180614");
 		setBounds(100, 100, 400, 213);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -134,8 +144,7 @@ public class StringSimpleTransformBaseJDialog extends JDialog {
 				okButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseReleased(MouseEvent arg0) {
-						StringSimpleTransformBaseJDialog.this.okClicked();
-						StringSimpleTransformBaseJDialog.this.dispose();
+						StringSimpleTransformBaseJDialog.this.onOK();
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -147,6 +156,7 @@ public class StringSimpleTransformBaseJDialog extends JDialog {
 				cancelButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseReleased(MouseEvent arg0) {
+						StringSimpleTransformBaseJDialog.this.onCancel();
 						StringSimpleTransformBaseJDialog.this.dispose();
 					}
 				});
@@ -165,7 +175,26 @@ public class StringSimpleTransformBaseJDialog extends JDialog {
 	protected JComboBox getTransformationTypeComboBox() {
 		return transformationTypeComboBox;
 	}
-	protected void okClicked() {
-		
+	
+	protected void onCancel() {
+		dispose();		
 	}
+	
+	protected void onOK() {
+		dispose();
+	}
+	
+	protected void registerESCKey() {
+        InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = rootPane.getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ESCAPE");
+
+        actionMap.put("ESCAPE", new AbstractAction() {
+			private static final long serialVersionUID = 6433143544659374034L;
+			public void actionPerformed(ActionEvent e) {
+            	onCancel();
+            }
+        });
+    }
 }
