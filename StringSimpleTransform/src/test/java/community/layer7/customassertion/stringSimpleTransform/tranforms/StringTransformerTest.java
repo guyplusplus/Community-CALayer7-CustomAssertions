@@ -43,6 +43,7 @@ public class StringTransformerTest {
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, "4a"), "J");
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF8_HEX, "4A"), "J");
 			assertEquals(StringTransformer.transformString(StringTransformer.FROM_UTF16_HEX, "00450e010046"), "E\u0e01F");
+			assertEquals(StringTransformer.transformString(StringTransformer.TO_UTF8_HEX, "E"), "45");
 			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_XML10_STRING, "A\u001e&\u001f'\u0020B\ufffeC\u0000D\u000CE"), "A&amp;&apos; BCDE");
 			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_XML_STRING, "A&#x0e01;&amp;&apos; B&#33;C"), "A\u0e01&' B!C");;
 			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_JSON_STRING, "A\\B'C\"D/E	F\u0003G\u0019H\u0000I\1111J"), "A\\\\B'C\\\"D\\/E\\tF\\u0003G\\u0019H\\u0000II1J");;
@@ -61,7 +62,7 @@ public class StringTransformerTest {
 			assertEquals(StringTransformer.transformString(StringTransformer.ENCODE_AS_XML10_STRING, input), " aB	&amp;\\\u65e5 \u0e01 1");
 			
 			//ensure all round trip decode(encode) work with a long complex case
-			input = StringTransformer.TOOLTIP_TEST_STRING + " & &amp; \\ \\\\ \t ' \\' \" \\\" &#33; &amp;#33; &#x0e01; &amp;#x0e01; \n \\n / \\/ ";
+			input = StringTransformer.TOOLTIP_TEST_STRING + " & &amp; \\ \\\\ \t ' \\' \" \\\" &#33; &amp;#33; &#x0e01; &amp;#x0e01; < > \n \\n / \\/ \\u0020 \\u00gg \\u12 ";
 			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_XML_STRING, StringTransformer.transformString(StringTransformer.ENCODE_AS_XML10_STRING, input)), input);
 			input += " \f \\f \r \\r \b \\b ";  // \f and \r \b are problems on XML 1.0
 			assertEquals(StringTransformer.transformString(StringTransformer.DECODE_JSON_STRING, StringTransformer.transformString(StringTransformer.ENCODE_AS_JSON_STRING, input)), input);
