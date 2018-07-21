@@ -26,4 +26,6 @@ It has been designed to support easy addition of a new type transformation witho
 
 Duplicate name is JSON is actually allowed but not recommended. For example {"a":1, "a":2}.
 
-To avoid any doubt, this assertion parses a JSON and detects duplicated names. In the case the JSON request can not be parsed, the assertion moves on. The name of the failed name is stored in the context variable 'duplicatedName'.
+To avoid any doubt, this assertion parses a JSON message inside the request object and detects any possible duplicated name in any object contained in the main object or array. In the case the JSON request can not be parsed, this assertion does not fail, the service logic continues.
+
+The duplicated name is stored in the context variable 'duplicatedName', in a JSON path format, for example '$.[1].c[1].d.e'.
