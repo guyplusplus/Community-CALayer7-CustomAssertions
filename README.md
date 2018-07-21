@@ -21,3 +21,9 @@ This assertion allows simple transformation such as:
 ![Dialog Screenshot](/StringSimpleTransform/DialogScreenShot.png)
 
 It has been designed to support easy addition of a new type transformation without the need of the Custom Assertion SDK. The 'transforms' package is independent and can be compiled without the SDK.
+
+## No Duplicate JSON Name
+
+Duplicate name is JSON is actually allowed but not recommended. For example {"a":1, "a":2}.
+
+To avoid any doubt, this assertion parses a JSON and detects duplicated names. In the case the JSON request can not be parsed, the assertion moves on. The name of the failed name is stored in the context variable 'duplicatedName'.
