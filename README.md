@@ -24,7 +24,7 @@ It has been designed to support easy addition of a new type transformation witho
 
 ## No Duplicate JSON Name
 
-Duplicate name is JSON is actually allowed but not recommended. For example `{"a":1, "a":2}`.
+Duplicate name in a JSON object is actually allowed but not recommended. For example `{"a":1, "a":2}`. For reference [JSON Object RFC 7159](https://tools.ietf.org/html/rfc7159#section-4) where SHOULD is defined in [Key words RFC 2119](https://tools.ietf.org/html/rfc2119).
 
 To avoid any doubt, this assertion parses a JSON message inside the request object and detects any possible duplicated name in any object contained in the main object or array. In the case the JSON request can not be parsed, this assertion does not fail, the service logic continues.
 
