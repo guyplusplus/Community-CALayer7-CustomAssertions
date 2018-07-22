@@ -45,6 +45,7 @@ public class NoDuplicateJSONNameServiceInvocation extends ServiceInvocation {
 			return CustomAssertionStatus.FAILED;    		
 		}
 		//all good, no duplicated names
+    	customPolicyContext.setVariable(NoDuplicateJSONNameCustomAssertion.DUPLICATED_NAME_CONTEXT_VARIABLE, null);
 		return CustomAssertionStatus.NONE;
     }
     
