@@ -29,3 +29,5 @@ Duplicate name is JSON is actually allowed but not recommended. For example {"a"
 To avoid any doubt, this assertion parses a JSON message inside the request object and detects any possible duplicated name in any object contained in the main object or array. In the case the JSON request can not be parsed, this assertion does not fail, the service logic continues.
 
 The first duplicated name found is stored in the context variable 'duplicatedName', in a JSON path format, for example '$.a'.
+
+** warning: ** use this assertion after the request JSON object size is bounded, typically via a 'Protect Against JSON Document Structure Assertion' and set 'container depth' and 'object entry count' with reasonable values.
