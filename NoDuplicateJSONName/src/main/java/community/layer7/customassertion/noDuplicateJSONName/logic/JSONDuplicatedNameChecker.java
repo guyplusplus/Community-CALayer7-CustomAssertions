@@ -22,7 +22,7 @@ public class JSONDuplicatedNameChecker {
 		}
 		catch(JsonParsingException e) {
 			//ignore this case
-			//System.out.println("JsonParsingException");
+			//System.out.println("JsonParsingException e=" + e);
 		}
 	}
 	
