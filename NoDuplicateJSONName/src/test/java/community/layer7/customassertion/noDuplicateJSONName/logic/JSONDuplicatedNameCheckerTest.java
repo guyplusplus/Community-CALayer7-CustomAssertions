@@ -61,6 +61,12 @@ public class JSONDuplicatedNameCheckerTest {
     	}
 
     	try {
+    		JSONDuplicatedNameChecker.checkDuplicatedName(null); //invalid json
+    		JSONDuplicatedNameChecker.checkDuplicatedName(""); //invalid json
+    		JSONDuplicatedNameChecker.checkDuplicatedName("  "); //invalid json
+    		JSONDuplicatedNameChecker.checkDuplicatedName("["); //invalid json
+    		JSONDuplicatedNameChecker.checkDuplicatedName("]"); //invalid json
+    		JSONDuplicatedNameChecker.checkDuplicatedName(":"); //invalid json
     		JSONDuplicatedNameChecker.checkDuplicatedName("asdasd"); //invalid json
     		JSONDuplicatedNameChecker.checkDuplicatedName("{\"a\":123, \"a2\":456, \"b\":[1,2,3], \"c\":[4,,,,{\"c\":22,\"d\":{\"e\":44,\"f\":88,\"e\":999}},5]}"); //invalid json
     		JSONDuplicatedNameChecker.checkDuplicatedName("{\"a\":123, \"a2\":456, \"b\":[1,2,3], \"c\":[4,{\"c\":22,\"d\":{\"e\":44,\"f\":88,\"g\":999}},5]}"); //valid

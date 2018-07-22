@@ -6,11 +6,12 @@ import java.util.HashSet;
 import javax.json.Json;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
-import javax.json.stream.JsonParsingException;
 
 public class JSONDuplicatedNameChecker {
 	
 	public static void checkDuplicatedName(String jsonStr) throws DuplicatedKeyName {
+		if(jsonStr == null)
+			return;
 		JsonParser parser = Json.createParser(new StringReader(jsonStr));
 		try {
 			Event e = parser.next();
@@ -20,8 +21,11 @@ public class JSONDuplicatedNameChecker {
 				parseArray(parser, "$.");
 			//else ignore
 		}
-		catch(JsonParsingException e) {
-			//ignore this case
+		catch(DuplicatedKeyName e) {
+			throw e;
+		}
+		catch(Exception e) {
+			//ignore any other case
 			//System.out.println("JsonParsingException e=" + e);
 		}
 	}
