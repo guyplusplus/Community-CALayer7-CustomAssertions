@@ -10,10 +10,8 @@ import javax.json.stream.JsonParser.Event;
 public class JSONDuplicatedNameChecker {
 	
 	public static void checkDuplicatedName(String jsonStr) throws DuplicatedKeyName {
-		if(jsonStr == null)
-			return;
-		JsonParser parser = Json.createParser(new StringReader(jsonStr));
 		try {
+			JsonParser parser = Json.createParser(new StringReader(jsonStr));
 			Event e = parser.next();
 			if(e == Event.START_OBJECT)
 				parseObject(parser, "$");
@@ -26,7 +24,7 @@ public class JSONDuplicatedNameChecker {
 		}
 		catch(Exception e) {
 			//ignore any other case
-			//System.out.println("JsonParsingException e=" + e);
+			//System.out.println("JSONDuplicatedNameChecker.checkDuplicatedName:Exception e=" + e);
 		}
 	}
 	
