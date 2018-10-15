@@ -1,0 +1,162 @@
+{
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Person",
+  "type": "object",
+  "properties": {
+    "aString": {
+      "type": "string"
+    },
+    "phones1": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "phones2": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "xml": {
+          "name": "PHONE_2"
+        }
+      },
+      "xml": {
+        "name": "PHONES_2"
+      }
+    },
+    "phones3": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "xml": {
+          "name": "PHONE_3"
+        }
+      },
+      "xml": {
+        "name": "PHONES_3",
+     	"wrapped": true
+      }
+    },
+    "phones4": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "xml": {
+        "name": "PHONES_4",
+     	"wrapped": true
+      }
+    },
+    "ints1": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "xml": {
+          "name": "INT_1"
+        }
+      },
+      "xml": {
+        "name": "INTS_1",
+      	"wrapped": true
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "objects1": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "xml": {
+              "attribute": true
+            }
+          }
+        },
+        "xml": {
+          "name": "OBJECT_1"
+        }
+      },
+      "xml": {
+        "name": "OBJECTS_1",
+     	"wrapped": true
+      }
+    },
+    "arrayOfArrays": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "xml": {
+            "name": "INT"
+          }
+        },
+        "xml": {
+          "name": "ARRAY",
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "name": "ARRAYS",
+        "wrapped": true
+      }
+    },
+    "arrayOfArrays2": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "xml": {
+            "name": "INT"
+          }
+        },
+        "xml": {
+          "name": "ARRAY2",
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "name": "ARRAYS2"
+      }
+    },
+    "arrayOfArrays3": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "xml": {
+            "name": "STRING"
+          }
+        },
+        "xml": {
+          "name": "ARRAY3",
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "name": "ARRAYS3",
+        "wrapped": true
+      }
+    }
+  }
+}
