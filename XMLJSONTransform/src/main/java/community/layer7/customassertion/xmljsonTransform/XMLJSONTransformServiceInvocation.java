@@ -44,14 +44,9 @@ public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
         	logger.log(Level.WARNING, "InputVariable is not defined");
         	return CustomAssertionStatus.FAILED;
         }
-        if (xmljsonTransformCustomAssertion.getTransformationTypeID() != 0)
-        	transformationTypeID = xmljsonTransformCustomAssertion.getTransformationTypeID();
-        else {
-        	logger.log(Level.WARNING, "transformationTypeID is defaulted to 0");
-        	return CustomAssertionStatus.FAILED;
-        }
+        transformationTypeID = xmljsonTransformCustomAssertion.getTransformationTypeID();
         try {
-        	String jsonSchemaString = xmljsonTransformCustomAssertion.getJsonSchema();
+        	String jsonSchemaString = customPolicyContext.expandVariable(xmljsonTransformCustomAssertion.getJsonSchema());
         	JSONSchemaForXML jsonSchemaForXML = new JSONSchemaForXML(jsonSchemaString);
         	JSONObject o = jsonSchemaForXML.mapXMLToJSON(input);
             String output = o.toString(xmljsonTransformCustomAssertion.isOutputFormatted() ? 2 : 0);

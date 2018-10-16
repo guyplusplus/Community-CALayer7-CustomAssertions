@@ -71,6 +71,8 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 	}
 	
 	public XMLJSONTransformBaseJDialog() {
+		setTitle("XML / JSON Transform Properties - v181016");
+		setModal(true);
 		setBounds(100, 100, 872, 500);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -176,7 +178,7 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		JScrollPane schemaJPanel = new JScrollPane();
 		schemaJPanel.setViewportBorder(new TitledBorder(null, "JSON Schema : Configure in advance", TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		GridBagConstraints gbc_schemaJPanel = new GridBagConstraints();
-		gbc_schemaJPanel.weighty = 1.0;
+		gbc_schemaJPanel.weighty = 3.0;
 		gbc_schemaJPanel.insets = new Insets(0, 5, 5, 5);
 		gbc_schemaJPanel.weightx = 1.0;
 		gbc_schemaJPanel.fill = GridBagConstraints.BOTH;

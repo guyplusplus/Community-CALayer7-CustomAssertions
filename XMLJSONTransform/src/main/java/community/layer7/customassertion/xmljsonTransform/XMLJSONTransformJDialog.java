@@ -38,9 +38,11 @@ public class XMLJSONTransformJDialog extends XMLJSONTransformBaseJDialog impleme
 		super.getOutputVariableNameJTextField().setText(customAssertion.getOutputVariable());
 		//set combox
 		super.getTransformationJComboBox().setModel(new DefaultComboBoxModel(TransformationHelper.getSupportedTransformations()));
-		super.getTransformationJComboBox().setSelectedIndex(customAssertion.getTransformationTypeID() - 1);
+		super.getTransformationJComboBox().setSelectedIndex(customAssertion.getTransformationTypeID());
 		//set formatted output checkbox
 		super.getFormatOutputJCheckBox().setSelected(customAssertion.isOutputFormatted());
+		//set schema
+		super.getSchemaTextArea().setText(customAssertion.getJsonSchema());
 	}
 
 	@Override
@@ -68,8 +70,9 @@ public class XMLJSONTransformJDialog extends XMLJSONTransformBaseJDialog impleme
 	protected void onOK() {
 		xmljsonTransformCustomAssertion.setInputVariable(super.getInputVariableNameJTextField().getText());
 		xmljsonTransformCustomAssertion.setOutputVariable(super.getOutputVariableNameJTextField().getText());
-		xmljsonTransformCustomAssertion.setTransformationTypeID(super.getTransformationJComboBox().getSelectedIndex() + 1);
+		xmljsonTransformCustomAssertion.setTransformationTypeID(super.getTransformationJComboBox().getSelectedIndex());
 		xmljsonTransformCustomAssertion.setOutputFormatted(super.getFormatOutputJCheckBox().isSelected());
+		xmljsonTransformCustomAssertion.setJsonSchema(super.getSchemaTextArea().getText());
 		editorSupport.fireEditAccepted(xmljsonTransformCustomAssertion);
 		dispose();
 	}
