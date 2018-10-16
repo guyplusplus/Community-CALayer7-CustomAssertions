@@ -62,6 +62,7 @@ public class StringSimpleTransformBaseJDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public StringSimpleTransformBaseJDialog() {
+		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("String Simple Transform Properties - v180614");
