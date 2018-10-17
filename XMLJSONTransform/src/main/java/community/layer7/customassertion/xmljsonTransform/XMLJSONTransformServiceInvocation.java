@@ -10,9 +10,18 @@ import com.l7tech.policy.assertion.ext.ServiceInvocation;
 import com.l7tech.policy.assertion.ext.message.CustomPolicyContext;
 
 import community.layer7.customassertion.xmljsonTransform.transforms.JSONSchemaForXML;
+import community.layer7.customassertion.xmljsonTransform.transforms.SchemaCache;
 
 public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
-    private static final Logger logger = Logger.getLogger(XMLJSONTransformServiceInvocation.class.getName());
+    
+	private static final String JSONXML_SCHEMACACHE_MAXAGE_VARIABLE_NAME = "jsonxml.schemaCache.maxAge";
+	private static final String JSONXML_SCHEMACACHE_MAXDOWNLOADSIZE_VARIABLE_NAME = "jsonxml.schemaCache.maxDownloadSize";
+	private static final String JSONXML_SCHEMACACHE_MAXENTRIES_VARIABLE_NAME = "jsonxml.schemaCache.maxEntries";
+	
+	private static final Logger logger = Logger.getLogger(XMLJSONTransformServiceInvocation.class.getName());
+	private static final long JSONXML_SCHEMA_CACHE_UPDATE_FREQUENCY = 5 * 60 * 1000;
+	private static long lastSchemaCacheUpdateTimeInMs;
+    
     private XMLJSONTransformCustomAssertion xmljsonTransformCustomAssertion;
     private String input;
     private int transformationTypeID;
@@ -25,6 +34,7 @@ public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
                     (customAssertion == null ? "null" : customAssertion.getClass().getName())));
         	return CustomAssertionStatus.FAILED;        		    		
     	}
+    	updateJSONXMLSchemaCacheUpdateFrequency(customPolicyContext);
         xmljsonTransformCustomAssertion = (XMLJSONTransformCustomAssertion)customAssertion;
         if (xmljsonTransformCustomAssertion.getInputVariable() != null) {
         	Object inputAsObject = customPolicyContext.getVariable(xmljsonTransformCustomAssertion.getInputVariable());
@@ -47,7 +57,7 @@ public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
         transformationTypeID = xmljsonTransformCustomAssertion.getTransformationTypeID();
         try {
         	String jsonSchemaString = customPolicyContext.expandVariable(xmljsonTransformCustomAssertion.getJsonSchema());
-        	JSONSchemaForXML jsonSchemaForXML = new JSONSchemaForXML(jsonSchemaString);
+        	JSONSchemaForXML jsonSchemaForXML = SchemaCache.getSingleton().getJSONSchemaForXML(jsonSchemaString);
         	JSONObject o = jsonSchemaForXML.mapXMLToJSON(input);
             String output = o.toString(xmljsonTransformCustomAssertion.isOutputFormatted() ? 2 : 0);
             customPolicyContext.setVariable(xmljsonTransformCustomAssertion.getOutputVariable(), output);
@@ -62,5 +72,35 @@ public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
         return CustomAssertionStatus.NONE;
     }
 
-
+    private static synchronized void updateJSONXMLSchemaCacheUpdateFrequency(CustomPolicyContext customPolicyContext) {
+    	long now = System.currentTimeMillis();
+    	long pointInTime = now - JSONXML_SCHEMA_CACHE_UPDATE_FREQUENCY;
+    	if(lastSchemaCacheUpdateTimeInMs > pointInTime)
+    		return;
+    	try {
+    		long l = Long.parseLong(customPolicyContext.expandVariable("${gateway." + JSONXML_SCHEMACACHE_MAXAGE_VARIABLE_NAME + "}"));
+    		logger.log(Level.INFO, JSONXML_SCHEMACACHE_MAXAGE_VARIABLE_NAME  + " set to " + l); 
+    		SchemaCache.setJsonxmlSchemaCacheMaxAge(l);
+    	}
+    	catch(Exception e) {
+    		logger.log(Level.WARNING, "Problem to parse " + JSONXML_SCHEMACACHE_MAXAGE_VARIABLE_NAME + ". e=" + e);
+    	}
+    	try {
+    		int i = Integer.parseInt(customPolicyContext.expandVariable("${gateway." + JSONXML_SCHEMACACHE_MAXDOWNLOADSIZE_VARIABLE_NAME + "}"));    		
+    		logger.log(Level.INFO, JSONXML_SCHEMACACHE_MAXDOWNLOADSIZE_VARIABLE_NAME  + " set to " + i); 
+    		SchemaCache.setJsonxmlSchemaCacheMaxDownloadSize(i);
+    	}
+    	catch(Exception e) {
+    		logger.log(Level.WARNING, "Problem to parse " + JSONXML_SCHEMACACHE_MAXDOWNLOADSIZE_VARIABLE_NAME + ". e=" + e);
+    	}
+    	try {
+    		int i = Integer.parseInt(customPolicyContext.expandVariable("${gateway." + JSONXML_SCHEMACACHE_MAXENTRIES_VARIABLE_NAME + "}"));    		
+    		logger.log(Level.INFO, JSONXML_SCHEMACACHE_MAXENTRIES_VARIABLE_NAME  + " set to " + i); 
+    		SchemaCache.setJsonxmlSchemaCacheMaxEntries(Integer.parseInt(customPolicyContext.expandVariable("${gateway." + JSONXML_SCHEMACACHE_MAXENTRIES_VARIABLE_NAME + "}")));
+    	}
+    	catch(Exception e) {
+    		logger.log(Level.WARNING, "Problem to parse " + JSONXML_SCHEMACACHE_MAXENTRIES_VARIABLE_NAME + ". e=" + e);
+    	}
+    	lastSchemaCacheUpdateTimeInMs = now;
+    }
 }

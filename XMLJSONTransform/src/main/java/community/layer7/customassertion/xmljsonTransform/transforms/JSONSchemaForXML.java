@@ -13,11 +13,13 @@ public class JSONSchemaForXML {
 	
 	private static final String DEFAULT_XML_ROOT_ELEMENT_NAME = "root";
 	
+	private long createdTimeInMs;
 	private XMLNodeSpec rootXMLNodeSpec;
 	private XMLNodeSpec rootContainerXMLNodeSpec;
 	private HashMap<String, XMLNodeSpec> definitionXMLNodeSpecHashMap = new HashMap<String, XMLNodeSpec>();
 	
 	public JSONSchemaForXML(String source) throws JSONSchemaLoadException {
+		createdTimeInMs = System.currentTimeMillis();
 		JSONObject schema = null;
 		if(source == null)
 			throw new JSONSchemaLoadException("Failed to parse JSON: source is null");
@@ -63,6 +65,10 @@ public class JSONSchemaForXML {
 		JSONObject rootIncludedObject = converter.getOutput();
 		//get the first key
 		return rootIncludedObject.getJSONObject(rootIncludedObject.keys().next());
+	}
+	
+	public long getCreatedTimeInMs() {
+		return createdTimeInMs;
 	}
 
 }
