@@ -4,10 +4,10 @@ import java.util.HashMap;
 
 public class SchemaCache {
 	
-	private static long JSONXML_SCHEMA_CACHE_AGE_SCAN_FREQUENCY = 60 * 1000; //60 seconds
-	private static long jsonxmlSchemaCacheMaxAge = -1;
-	private static int jsonxmlSchemaCacheMaxDownloadSize = 32 * 1024;
-	private static int jsonxmlSchemaCacheMaxEntries = 32;
+	private static long JSONXML_SCHEMA_CACHE_AGE_SCAN_FREQUENCY = 60 * 1000; // standard 60 seconds
+	private static long jsonxmlSchemaCacheMaxAge = -1; //default no aging
+	private static int jsonxmlSchemaCacheMaxDownloadSize = 128 * 1024; //default 128KB
+	private static int jsonxmlSchemaCacheMaxEntries = 128;//default 128 entries
 	
 	private static SchemaCache singleton = new SchemaCache();
 	
@@ -46,7 +46,7 @@ public class SchemaCache {
 	}
 	
 	public synchronized void flushCache() {
-		jsonSchemaForXMLCache = new HashMap<String, JSONSchemaForXML>();
+		jsonSchemaForXMLCache = new HashMap<String, JSONSchemaForXML>(jsonxmlSchemaCacheMaxEntries);
 		totalDownloadSize = 0;
 		lastScanTimeInMs = System.currentTimeMillis();
 	}

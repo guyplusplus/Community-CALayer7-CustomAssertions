@@ -18,8 +18,10 @@ public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
 	private static final String JSONXML_SCHEMACACHE_MAXDOWNLOADSIZE_VARIABLE_NAME = "jsonxml.schemaCache.maxDownloadSize";
 	private static final String JSONXML_SCHEMACACHE_MAXENTRIES_VARIABLE_NAME = "jsonxml.schemaCache.maxEntries";
 	
-	private static final Logger logger = Logger.getLogger(XMLJSONTransformServiceInvocation.class.getName());
 	private static final long JSONXML_SCHEMA_CACHE_UPDATE_FREQUENCY = 5 * 60 * 1000;
+
+	private static final Logger logger = Logger.getLogger(XMLJSONTransformServiceInvocation.class.getName());
+	
 	private static long lastSchemaCacheUpdateTimeInMs;
     
     private XMLJSONTransformCustomAssertion xmljsonTransformCustomAssertion;

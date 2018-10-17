@@ -11,6 +11,30 @@ import community.layer7.customassertion.xmljsonTransform.transforms.SchemaCache;
 public class SchemaCacheTest {
 
 	@Test
+	public void test_DefaultSettings() {
+		SchemaCache.setJsonxmlSchemaCacheMaxEntries(128);
+		SchemaCache.setJsonxmlSchemaCacheMaxDownloadSize(128*1024);
+		SchemaCache.setJsonxmlSchemaCacheMaxAge(-1);
+		try {
+			SchemaCache.getSingleton().flushCache();
+			JSONSchemaForXML sc1 = SchemaCache.getSingleton().getJSONSchemaForXML("{\"type\":\"object\",\"properties\":{\"aString\":{\"type\":\"string\"}}}");
+			JSONSchemaForXML sc2 = SchemaCache.getSingleton().getJSONSchemaForXML("{\"type\":\"object\",\"properties\":{\"aString\":{\"type\":\"string\"}}}");
+			assertTrue(sc1 == sc2);
+			JSONSchemaForXML sc3 = SchemaCache.getSingleton().getJSONSchemaForXML("{\"type\":\"object\",\"properties\":{\"aString2\":{\"type\":\"string\"}}}");
+			JSONSchemaForXML sc4 = SchemaCache.getSingleton().getJSONSchemaForXML("{\"type\":\"object\",\"properties\":{\"aString2\":{\"type\":\"string\"}}}");
+			assertTrue(sc1 != sc3);
+			assertTrue(sc3 == sc4); //cache is working
+			JSONSchemaForXML sc5 = SchemaCache.getSingleton().getJSONSchemaForXML("{\"type\":\"object\",\"properties\":{\"aString3\":{\"type\":\"string\"}}}");
+			JSONSchemaForXML sc6 = SchemaCache.getSingleton().getJSONSchemaForXML("{\"type\":\"object\",\"properties\":{\"aString3\":{\"type\":\"string\"}}}");
+			assertTrue(sc1 != sc5);
+			assertTrue(sc3 != sc5);
+			assertTrue(sc5 == sc6); //cache is working
+		} catch (JSONSchemaLoadException e) {
+			fail("Should not throw exception");
+		}
+	}
+
+	@Test
 	public void testNoCache() {
 		SchemaCache.setJsonxmlSchemaCacheMaxEntries(0);
 		SchemaCache.setJsonxmlSchemaCacheMaxDownloadSize(12800);

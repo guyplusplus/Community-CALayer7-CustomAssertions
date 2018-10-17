@@ -39,9 +39,9 @@ This assertion transforms XML / JSON based on JSON schema included in the swagge
 ![Dialog Screenshot](/XMLJSONTransform/DialogScreenShot.png)
 
 Schema caching is controlled with the 3 cluster properties:
-* jsonxml.schemaCache.maxAge (in ms): entries older than this age are flushed. Set to -1 to avoid cache flush
-* jsonxml.schemaCache.maxDownloadSize (in characters)
-* jsonxml.schemaCache.maxEntries. Set to 0 to avoid cache.
+* jsonxml.schemaCache.maxAge (in ms): entries older than this age are flushed. Set to -1 to avoid cache flush. Default is -1
+* jsonxml.schemaCache.maxDownloadSize (in characters). Default is 128KB
+* jsonxml.schemaCache.maxEntries. Set to 0 to avoid cache. Default is 128
 
 Every 5 minutes these values will be refreshed.
 
