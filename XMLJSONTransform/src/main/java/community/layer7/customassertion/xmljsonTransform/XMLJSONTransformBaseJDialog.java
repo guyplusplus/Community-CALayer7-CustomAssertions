@@ -268,7 +268,9 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 			getTestOutputJTextArea().setText(o.toString(getFormatOutputJCheckBox().isSelected() ? 2 : 0));
 		}
 		catch(Exception e) {
-			getTestErrorJLabel().setText(e.toString());
+			String msg = e.toString();
+			msg = msg.replace('\t', '-').replace('\n', '-').replace('\r','-');
+			getTestErrorJLabel().setText(msg);
 		}
 	}
 	
