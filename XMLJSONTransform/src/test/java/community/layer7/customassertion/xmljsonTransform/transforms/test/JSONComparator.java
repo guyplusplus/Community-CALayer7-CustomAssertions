@@ -23,10 +23,14 @@ public class JSONComparator {
 			return o2.equals(JSONObject.NULL);
 		if(o1 instanceof Boolean || o1 instanceof String)
 			return o1.equals(o2);
-		if(o1 instanceof Integer || o1 instanceof Double || o1 instanceof Float || o1 instanceof BigDecimal || o1 instanceof BigInteger) {
-			BigDecimal o1bd = new BigDecimal(o1.toString());
-			BigDecimal o2bd = new BigDecimal(o2.toString());
-			return o1bd.compareTo(o2bd) == 0;
+		if(o1 instanceof Integer || o1 instanceof Long || o1 instanceof Double || o1 instanceof Float || o1 instanceof BigDecimal || o1 instanceof BigInteger) {
+			try {
+				BigDecimal o1bd = new BigDecimal(o1.toString());
+				BigDecimal o2bd = new BigDecimal(o2.toString());
+				return o1bd.compareTo(o2bd) == 0;
+			} catch (NumberFormatException e) {
+				return false;
+			}
 		}
 		if(o1 instanceof JSONObject) {
 			if(!(o2 instanceof JSONObject))
