@@ -26,7 +26,7 @@ public class JSONSchemaForXMLTest {
 	
 	private static final String JSON_TEST_FILES_FOLDER = "community/layer7/customassertion/xmljsonTransform/transforms/test/";
 	
-	public String convert(InputStream inputStream, Charset charset) throws IOException {
+	private String convertInputStreamToString(InputStream inputStream, Charset charset) throws IOException {
 		 
 		StringBuilder stringBuilder = new StringBuilder();
 		String line = null;
@@ -40,7 +40,7 @@ public class JSONSchemaForXMLTest {
 	}
 
 	@Test
-	public void testJSONSchemaForXML0() {
+	public void testJSONSchema_InvalidSchemas() {
 		try {
 			new JSONSchemaForXML(null);
 			fail("null should throw exception");
@@ -58,7 +58,7 @@ public class JSONSchemaForXMLTest {
 	}
 	
 	@Test
-	public void testJSONSchemaForXML1() {
+	public void testJSONSchema_Simple() {
 		String schema = null;
 		JSONObject o = null;
 		JSONSchemaForXML jsonSchemaForXML = null;		
@@ -72,9 +72,9 @@ public class JSONSchemaForXMLTest {
 			assertTrue(e.toString().indexOf("character 7 line 4") != -1);
 		}
 
-		String resourceName = JSON_TEST_FILES_FOLDER + "simple1.json";
+		String resourceName = JSON_TEST_FILES_FOLDER + "schema_simple.json";
 		try {
-			schema = convert(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
+			schema = convertInputStreamToString(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
 			assertTrue(schema.indexOf("$schema") != -1); //load string ok
 		} catch (IOException e) {
 			fail("Failed to load " + resourceName + ", e=" + e);
@@ -379,12 +379,12 @@ public class JSONSchemaForXMLTest {
 	}
 
 	@Test
-	public void testJSONSchemaForXML2() {
+	public void testJSONSchema_PropertyXML() {
 		String schema = null;
 		JSONObject o = null;
-		String resourceName = JSON_TEST_FILES_FOLDER + "simple2.json";
+		String resourceName = JSON_TEST_FILES_FOLDER + "schema_propertyXML.json";
 		try {
-			schema = convert(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
+			schema = convertInputStreamToString(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
 			assertTrue(schema.indexOf("$schema") != -1); //load string ok
 		} catch (IOException e) {
 			fail("Failed to load " + resourceName + ", e=" + e);
@@ -460,12 +460,12 @@ public class JSONSchemaForXMLTest {
 	}
 	
 	@Test
-	public void testJSONSchemaForXML3() {
+	public void testJSONSchema_RootXML() {
 		String schema = null;
 		JSONObject o = null;
-		String resourceName = JSON_TEST_FILES_FOLDER + "simple3.json";
+		String resourceName = JSON_TEST_FILES_FOLDER + "schema_rootxml.json";
 		try {
-			schema = convert(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
+			schema = convertInputStreamToString(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
 			assertTrue(schema.indexOf("$schema") != -1); //load string ok
 		} catch (IOException e) {
 			fail("Failed to load " + resourceName + ", e=" + e);
@@ -514,12 +514,12 @@ public class JSONSchemaForXMLTest {
 	}
 	
 	@Test
-	public void testJSONSchemaForXML4() {
+	public void testJSONSchema_Attributes() {
 		String schema = null;
 		JSONObject o = null;
-		String resourceName = JSON_TEST_FILES_FOLDER + "simple4.json";
+		String resourceName = JSON_TEST_FILES_FOLDER + "schema_attribute.json";
 		try {
-			schema = convert(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
+			schema = convertInputStreamToString(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
 			assertTrue(schema.indexOf("$schema") != -1); //load string ok
 		} catch (IOException e) {
 			fail("Failed to load " + resourceName + ", e=" + e);
@@ -650,12 +650,12 @@ public class JSONSchemaForXMLTest {
 	}
 
 	@Test
-	public void testJSONSchemaForXML_Arrays() {
+	public void testJSONSchema_Arrays() {
 		String schema = null;
 		JSONObject o = null;
-		String resourceName = JSON_TEST_FILES_FOLDER + "arrays2.json";
+		String resourceName = JSON_TEST_FILES_FOLDER + "schema_arrays.json";
 		try {
-			schema = convert(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
+			schema = convertInputStreamToString(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
 			assertTrue(schema.indexOf("$schema") != -1); //load string ok
 		} catch (IOException e) {
 			fail("Failed to load " + resourceName + ", e=" + e);
