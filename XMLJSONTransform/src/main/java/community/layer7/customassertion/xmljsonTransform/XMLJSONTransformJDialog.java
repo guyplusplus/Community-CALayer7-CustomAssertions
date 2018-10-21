@@ -10,8 +10,6 @@ import com.l7tech.policy.assertion.ext.AssertionEditor;
 import com.l7tech.policy.assertion.ext.AssertionEditorSupport;
 import com.l7tech.policy.assertion.ext.EditListener;
 
-import community.layer7.customassertion.xmljsonTransform.transforms.TransformationHelper;
-
 /**
  * @author Guy Deffaux
  * October 2018
