@@ -1,6 +1,0 @@
-Behavior Options
-- do not trim when setting trim (behavior option)
-- do not throw error when property not found in schema, skip
-- if property not found in schema, add anyway as string
-
-- handle multiple object types
