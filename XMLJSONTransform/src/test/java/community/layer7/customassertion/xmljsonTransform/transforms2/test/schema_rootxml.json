@@ -1,0 +1,22 @@
+{
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SimpleObject",
+  "type": "object",
+  "properties": {
+    "str1": {
+      "type": "string"
+    },
+    "str2": {
+      "type": "string",
+      "xml": {
+        "name": "xmlstr2"
+      }
+    }
+  },
+  "xml": {
+    "name": "xmlroot",
+    "prefix": "soap",
+    "namespace": "http://www.w3.org/2003/05/soap-envelope/"
+  }
+}
