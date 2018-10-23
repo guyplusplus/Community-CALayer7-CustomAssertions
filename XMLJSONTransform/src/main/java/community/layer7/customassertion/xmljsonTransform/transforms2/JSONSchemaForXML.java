@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * @author Guy Deffaux
+ * @author Guy D.
  * October 2018
  */
 public class JSONSchemaForXML {

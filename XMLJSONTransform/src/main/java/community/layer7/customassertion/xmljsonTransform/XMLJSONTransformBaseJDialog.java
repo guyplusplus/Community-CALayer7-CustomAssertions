@@ -40,7 +40,7 @@ import java.awt.event.MouseEvent;
 import java.awt.Font;
 
 /**
- * @author Guy Deffaux
+ * @author Guy D.
  * October 2018
  */
 public class XMLJSONTransformBaseJDialog extends JDialog {

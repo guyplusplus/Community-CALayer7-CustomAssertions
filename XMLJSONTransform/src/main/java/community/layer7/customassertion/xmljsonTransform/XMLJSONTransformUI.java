@@ -11,7 +11,7 @@ import com.l7tech.policy.assertion.ext.CustomAssertion;
 import com.l7tech.policy.assertion.ext.CustomAssertionUI;
 
 /**
- * @author Guy Deffaux
+ * @author Guy D.
  * October 2018
  */
 public class XMLJSONTransformUI  implements CustomAssertionUI, Serializable {

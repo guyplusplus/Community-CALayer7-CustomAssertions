@@ -1,7 +1,7 @@
 package community.layer7.customassertion.xmljsonTransform;
 
 /**
- * @author Guy Deffaux
+ * @author Guy D.
  * October 2018
  */
 public class TransformationHelper {

@@ -11,7 +11,7 @@ import com.l7tech.policy.assertion.ext.AssertionEditorSupport;
 import com.l7tech.policy.assertion.ext.EditListener;
 
 /**
- * @author Guy Deffaux
+ * @author Guy D.
  * October 2018
  */
 public class XMLJSONTransformJDialog extends XMLJSONTransformBaseJDialog implements AssertionEditor {

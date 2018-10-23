@@ -6,7 +6,7 @@ import com.l7tech.policy.assertion.ext.CustomAssertion;
 import com.l7tech.policy.variable.VariableMetadata;
 
 /**
- * @author Guy Deffaux
+ * @author Guy D.
  * October 2018
  */
 public class XMLJSONTransformCustomAssertion implements CustomAssertion, UsesVariables, SetsVariables {

@@ -1,7 +1,7 @@
 package community.layer7.customassertion.xmljsonTransform.transforms2;
 
 /**
- * @author Guy Deffaux
+ * @author Guy D.
  * October 2018
  */
 public class JSONSchemaLoadException extends Exception {

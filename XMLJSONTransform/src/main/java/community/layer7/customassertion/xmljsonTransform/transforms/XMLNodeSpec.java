@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.json.JSONObject;
 
 /**
- * @author Guy Deffaux
+ * @author Guy D.
  * October 2018
  */
 public class XMLNodeSpec {
