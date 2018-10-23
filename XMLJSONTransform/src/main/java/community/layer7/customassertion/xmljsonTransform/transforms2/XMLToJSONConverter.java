@@ -157,17 +157,21 @@ public class XMLToJSONConverter {
 			int attributeCount = reader.getAttributeCount();
 			for(int attributeIndex = 0; attributeIndex < attributeCount; attributeIndex++) {
 				String prefixName = reader.getAttributePrefix(attributeIndex);
-				String attributeName = reader.getAttributeLocalName(attributeIndex);
+				String fqAttributeName = reader.getAttributeLocalName(attributeIndex);
 				if(prefixName != null && prefixName.length() > 0)
-					attributeName = prefixName + ":" + attributeName;
+					fqAttributeName = prefixName + ":" + fqAttributeName;
 				//now attributeName is prefix:localName
-				PropertyXMLNodeSpec attributePropertyXMLNodeSpec = xmlNodeSpecObject.getAttributePropertyXMLNodeSpecByName(attributeName);
+				PropertyXMLNodeSpec attributePropertyXMLNodeSpec = xmlNodeSpecObject.getAttributePropertyXMLNodeSpecByName(fqAttributeName);
 				if(attributePropertyXMLNodeSpec == null)
-					throw new MapException("Attribute not found in JSON schema", xpath + "/@" + attributeName);
+					throw new MapException("Attribute not found in JSON schema", xpath + "/@" + fqAttributeName);
 				if(!(attributePropertyXMLNodeSpec.getXmlNodeSpec() instanceof XMLNodeSpecSimpleValue))
-					throw new MapException("Attribute should be a simple type (boolean, integer, number, string)", xpath + "/@" + attributeName);					
-				Object attributeValue = createObjectFromSimpleProperty(reader.getAttributeValue(attributeIndex), attributePropertyXMLNodeSpec.getXmlNodeSpec().getNodeType(), xpath + "/@" + attributeName); 
-				addKeyValueToJSONObject(attributePropertyXMLNodeSpec.getPropertyName(), attributeValue, o, xpath + "/@" + attributeName, false);
+					throw new MapException("Attribute should be a simple type (boolean, integer, number, string)", xpath + "/@" + fqAttributeName);
+				if(prefixName != null && attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace() != null)
+					if(!attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace().equals(reader.getAttributeNamespace(attributeIndex)))
+						throw new MapException("Invalid namespace", xpath + "/@" + fqAttributeName);
+				
+				Object attributeValue = createObjectFromSimpleProperty(reader.getAttributeValue(attributeIndex), attributePropertyXMLNodeSpec.getXmlNodeSpec().getNodeType(), xpath + "/@" + fqAttributeName); 
+				addKeyValueToJSONObject(attributePropertyXMLNodeSpec.getPropertyName(), attributeValue, o, xpath + "/@" + fqAttributeName, false);
 			}
 			while(true) {
 				if(!reader.hasNext())
@@ -190,6 +194,10 @@ public class XMLToJSONConverter {
 					PropertyXMLNodeSpec childElementPropertyXMLNodeSpec = xmlNodeSpecObject.getChildElementPropertyXMLNodeSpecByName(fqElementName);
 					if(childElementPropertyXMLNodeSpec == null)
 						throw new MapException("Element not found in JSON schema", xpath + "/" + fqElementName);
+					//check namespace is correct
+					if(childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlPrefix() != null && childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace() != null)
+						if(!childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace().equals(reader.getNamespaceURI()))
+							throw new MapException("Invalid namespace", xpath + "/" + fqElementName);
 					Object childElement = parseJSONValue(reader, childElementPropertyXMLNodeSpec.getXmlNodeSpec(), xpath + "/" + fqElementName);
 					addKeyValueToJSONObject(childElementPropertyXMLNodeSpec.getPropertyName(), childElement, o, xpath + "/" + fqElementName, false);
 				}
