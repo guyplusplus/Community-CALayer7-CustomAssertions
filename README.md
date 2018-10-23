@@ -46,13 +46,16 @@ Schema caching is controlled with the 3 cluster properties:
 Every 5 minutes these values will be refreshed.
 
 TODO (by order of priority):
-1. support for $ref
-   * included ref entries in definitions section
-2. JSON to XML
-3. optimize code for path (used when raising exception)
-4. XML to JSON: control space trim for string content (text node) and XML attributes (quote delimited)
-5. additional elements / JSON property key behavior: error, ignore or map as string
-6. Suppoer schema oneOf, anyOf, etc
-7. support for $ref
-   * external ref
+* support for $ref
+  * included ref entries in definitions section
+* JSON to XML
+* additionalProperties support:
+  * true or false
+* optimize code for xpath (used when raising exception)
+* XML to JSON: control space trim for string content (text node) and XML attributes (quote delimited)
+* additionalProperties support:
+  * with schema
+* Support schema oneOf, anyOf, allOf
+* support for $ref
    * support $id
+   * external ref
