@@ -16,10 +16,6 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 		super(TYPE_OBJECT);
 	}
 	
-	public void addXMLElement(String key, PropertyXMLNodeSpec propertyXMLNodeSpec) {
-		xmlElements.put(key, propertyXMLNodeSpec);
-	}
-
 	@Override
 	public void loadJSONValue(JSONObject schema, String valueDesriptionForException) throws JSONSchemaLoadException {
 		super.loadJSONValue(schema, valueDesriptionForException);
