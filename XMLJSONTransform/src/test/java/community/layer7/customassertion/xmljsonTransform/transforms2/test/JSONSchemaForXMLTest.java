@@ -376,6 +376,16 @@ public class JSONSchemaForXMLTest {
 			assertTrue(e.toString().indexOf("path: /root/aBoolean") != -1);
 		}
 		try {
+			//invalid aNull property
+			o = jsonSchemaForXML.mapXMLToJSON("<root><aNull>sdf</aNull></root>");
+			fail("Should fail");
+		}
+		catch(MapException e) {
+			//ok
+			assertTrue(e.toString().indexOf("Failure to convert value to a null") != -1);
+			assertTrue(e.toString().indexOf("path: /root/aNull") != -1);
+		}
+		try {
 			//unknown property aNumber2
 			o = jsonSchemaForXML.mapXMLToJSON("<root><aNumber2>123</aNumber2></root>");
 			fail("Should fail");

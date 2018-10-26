@@ -16,6 +16,9 @@
     "aBoolean": {
       "type": "boolean"
     },
+    "aNull": {
+      "type": "null"
+    },
     "anObject": {
       "type": "object",
       "properties": {

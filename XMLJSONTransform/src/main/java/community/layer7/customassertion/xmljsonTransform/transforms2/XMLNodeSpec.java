@@ -11,6 +11,7 @@ public abstract class XMLNodeSpec {
 	public static final int TYPE_NUMBER = 4;
 	public static final int TYPE_INTEGER = 5;
 	public static final int TYPE_BOOLEAN = 6;
+	public static final int TYPE_NULL = 7;
 	
 	protected int nodeType = TYPE_UNDEFINED;
 	protected String xmlName = null;
@@ -34,6 +35,8 @@ public abstract class XMLNodeSpec {
 			return TYPE_INTEGER;
 		if(type.equals("boolean"))
 			return TYPE_BOOLEAN;
+		if(type.equals("null"))
+			return TYPE_NULL;
 		return TYPE_UNDEFINED;
 	}
 	

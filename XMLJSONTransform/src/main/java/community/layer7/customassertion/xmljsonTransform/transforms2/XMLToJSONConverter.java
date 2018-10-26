@@ -292,6 +292,9 @@ public class XMLToJSONConverter {
 		}
 		else if(charactersTrimmed.equalsIgnoreCase("null"))
 			return JSONObject.NULL;
+		else if(nodeType == XMLNodeSpec.TYPE_NULL) {
+			throw new MapException("Failure to convert value to a null", xpath);
+		}
 		else if(nodeType == XMLNodeSpec.TYPE_BOOLEAN) {
 			if(charactersTrimmed.equalsIgnoreCase("true"))
 				 return Boolean.TRUE;
