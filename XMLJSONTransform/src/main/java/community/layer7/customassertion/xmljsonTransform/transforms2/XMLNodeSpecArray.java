@@ -19,11 +19,23 @@ public class XMLNodeSpecArray extends XMLNodeSpec {
 		return itemsXMLNodeSpec;
 	}
 
-	@Override
 	public boolean isXMLWrapped() {
 		return isXMLWrapped;
 	}
 
+	@Override
+	public String calculateTargetFullXMLName(String objectName) {
+		if(isXMLWrapped) {
+			//in case of wrapped array, return value if either xmlName or xmlPrefix is defined
+			if(xmlName != null || xmlPrefix != null) {
+				String prefix = (xmlPrefix == null ? "" : xmlPrefix + ":");
+				return prefix + (xmlName == null ? objectName : xmlName);
+			}
+		}
+		//then need to look at inner object
+		return itemsXMLNodeSpec.calculateTargetFullXMLName(objectName);
+	}
+	
 	@Override
 	public void loadJSONValue(JSONObject schema, String valueDesriptionForException) throws JSONSchemaLoadException {
 		super.loadJSONValue(schema, valueDesriptionForException);
@@ -46,10 +58,11 @@ public class XMLNodeSpecArray extends XMLNodeSpec {
 			return;
 		}
 		if(itemsType.equals("array")) {
-			itemsXMLNodeSpec = new XMLNodeSpecArray();
-			itemsXMLNodeSpec.loadJSONValue(items, valueDesriptionForException);
+			XMLNodeSpecArray itemsXMLNodeSpecArray = new XMLNodeSpecArray();
+			itemsXMLNodeSpec = itemsXMLNodeSpecArray;
+			itemsXMLNodeSpecArray.loadJSONValue(items, valueDesriptionForException);
 			//check that items array is wrapped
-			if(!itemsXMLNodeSpec.isXMLWrapped())
+			if(!itemsXMLNodeSpecArray.isXMLWrapped())
 				throw new JSONSchemaLoadException("Nested array should always be wrapped for array '" + valueDesriptionForException + "'");
 			System.out.println("added items array");
 			return;

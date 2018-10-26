@@ -46,10 +46,6 @@ public abstract class XMLNodeSpec {
 	}
 	
 	public String calculateTargetFullXMLName(String objectName) {
-		if(nodeType == TYPE_ARRAY) {
-			if(!isXMLWrapped)
-				return null;
-		}
 		String name = (xmlName == null ? objectName : xmlName);
 		String fullXMLName = (xmlPrefix == null ? name : xmlPrefix + ":" + name);
 		return fullXMLName;
@@ -67,13 +63,13 @@ public abstract class XMLNodeSpec {
 		return xmlNamespace;
 	}
 
-	public boolean isXMLAttribute() throws JSONSchemaLoadException {
-		throw new JSONSchemaLoadException("isAttribute() is not allowed for this node type: " + nodeType);
-	}
-
-	public boolean isXMLWrapped() throws JSONSchemaLoadException {
-		throw new JSONSchemaLoadException("isWrapped() is not allowed for this node type: " + nodeType);
-	}
+//	public boolean isXMLAttribute() throws JSONSchemaLoadException {
+//		throw new JSONSchemaLoadException("isAttribute() is not allowed for this node type: " + nodeType);
+//	}
+//
+//	public boolean isXMLWrapped() throws JSONSchemaLoadException {
+//		throw new JSONSchemaLoadException("isWrapped() is not allowed for this node type: " + nodeType);
+//	}
 	
 	private void loadXML(JSONObject xml) {
 		if(xml == null)

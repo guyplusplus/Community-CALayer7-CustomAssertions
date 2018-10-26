@@ -6,7 +6,6 @@ public class XMLNodeSpecSimpleValue extends XMLNodeSpec {
 		super(nodeType);
 	}
 
-	@Override
 	public boolean isXMLAttribute() {
 		return isXMLAttribute;
 	}

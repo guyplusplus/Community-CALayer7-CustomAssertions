@@ -41,10 +41,10 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 				innerObject.loadJSONValue(propertyObject, propertyName);
 				PropertyXMLNodeSpec propertyXMLNodeSpec = new PropertyXMLNodeSpec(propertyName, null, innerObject);
 				//String hashKey = calculateTargetXMLNodeName(propertyName, innerObject.getFullXMLName());
-				String hashKey = innerObject.calculateTargetFullXMLName(propertyName);
-				checkKeyNotExistInHashMap(hashKey, xmlElements, valueDesriptionForException);
-				xmlElements.put(hashKey, propertyXMLNodeSpec);
-				System.out.println("added object XML element " + hashKey + " to " + valueDesriptionForException);
+				String innerObjectXMLElementName = innerObject.calculateTargetFullXMLName(propertyName);
+				checkKeyNotExistInHashMap(innerObjectXMLElementName, xmlElements, valueDesriptionForException);
+				xmlElements.put(innerObjectXMLElementName, propertyXMLNodeSpec);
+				System.out.println("added object XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
 				continue;
 			}
 			if(propertyType.equals("array")) {
@@ -52,10 +52,10 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 				innerObject.loadJSONValue(propertyObject, propertyName);
 				PropertyXMLNodeSpec propertyXMLNodeSpec = new PropertyXMLNodeSpec(propertyName, null, innerObject);
 				//String hashKey = calculateTargetXMLNodeName(propertyName, innerObject.getFullXMLName());
-				String hashKey = innerObject.calculateTargetFullXMLName(propertyName);
-				checkKeyNotExistInHashMap(hashKey, xmlElements, valueDesriptionForException);
-				xmlElements.put(hashKey, propertyXMLNodeSpec);
-				System.out.println("added array XML element " + hashKey + " to " + valueDesriptionForException);
+				String innerObjectXMLElementName = innerObject.calculateTargetFullXMLName(propertyName);
+				checkKeyNotExistInHashMap(innerObjectXMLElementName, xmlElements, valueDesriptionForException);
+				xmlElements.put(innerObjectXMLElementName, propertyXMLNodeSpec);
+				System.out.println("added array XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
 				if(!innerObject.isXMLWrapped())
 					nonWrappedJSONArrayNames.add(propertyName);
 				continue;
@@ -67,16 +67,16 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 			innerObject.loadJSONValue(propertyObject, propertyName);
 			PropertyXMLNodeSpec propertyXMLNodeSpec = new PropertyXMLNodeSpec(propertyName, null, innerObject);
 			//String hashKey = calculateTargetXMLNodeName(propertyName, innerObject.getFullXMLName());
-			String hashKey = innerObject.calculateTargetFullXMLName(propertyName);
+			String innerObjectXMLElementName = innerObject.calculateTargetFullXMLName(propertyName);
 			if(innerObject.isXMLAttribute()) {
-				checkKeyNotExistInHashMap(hashKey, xmlAttributes, valueDesriptionForException);
-				xmlAttributes.put(hashKey, propertyXMLNodeSpec);
-				System.out.println("added simple value XML attribute " + hashKey + " to " + valueDesriptionForException);
+				checkKeyNotExistInHashMap(innerObjectXMLElementName, xmlAttributes, valueDesriptionForException);
+				xmlAttributes.put(innerObjectXMLElementName, propertyXMLNodeSpec);
+				System.out.println("added simple value XML attribute " + innerObjectXMLElementName + " to " + valueDesriptionForException);
 			}
 			else {
-				checkKeyNotExistInHashMap(hashKey, xmlElements, valueDesriptionForException);
-				xmlElements.put(hashKey, propertyXMLNodeSpec);
-				System.out.println("added simple value XML element " + hashKey + " to " + valueDesriptionForException);
+				checkKeyNotExistInHashMap(innerObjectXMLElementName, xmlElements, valueDesriptionForException);
+				xmlElements.put(innerObjectXMLElementName, propertyXMLNodeSpec);
+				System.out.println("added simple value XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
 			}
 		}
 	}
