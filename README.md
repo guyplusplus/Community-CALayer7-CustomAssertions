@@ -51,6 +51,7 @@ TODO (by order of priority):
 * JSON to XML
 * additionalProperties support:
   * true or false
+* support for const and enum without type
 * optimize code for xpath (used when raising exception)
 * XML to JSON: control space trim for string content (text node) and XML attributes (quote delimited)
 * additionalProperties support:
