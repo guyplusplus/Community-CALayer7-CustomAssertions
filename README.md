@@ -52,11 +52,12 @@ TODO (by order of priority):
 * additionalProperties support:
   * true or false
 * support for const and enum without type
+* color for XML and JSON content
 * optimize code for xpath (used when raising exception)
 * XML to JSON: control space trim for string content (text node) and XML attributes (quote delimited)
 * additionalProperties support:
   * with schema
-* Support schema oneOf, anyOf, allOf
+* Support schema oneOf, anyOf, allOf, not
 * support for $ref
    * support $id
    * external ref
