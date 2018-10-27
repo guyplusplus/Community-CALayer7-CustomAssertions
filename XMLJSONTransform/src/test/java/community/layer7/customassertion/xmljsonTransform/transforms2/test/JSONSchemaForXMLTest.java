@@ -862,7 +862,7 @@ public class JSONSchemaForXMLTest {
 			fail("wrapped entry is wrong name - should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Wrapped element name is invalid") != -1);
+			assertTrue(e.toString().indexOf("Wrapped element name is not matching specifications") != -1);
 			assertTrue(e.toString().indexOf("path: /root/PHONES_3/PHONE_33") != -1);			
 		}
 		
@@ -872,7 +872,7 @@ public class JSONSchemaForXMLTest {
 			fail("wrapped entry is wrong name - should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Wrapped element name is invalid") != -1);
+			assertTrue(e.toString().indexOf("Wrapped element name is not matching specifications") != -1);
 			assertTrue(e.toString().indexOf("path: /root/PHONES_4/PHONES_44") != -1);			
 		}
 		
@@ -1020,42 +1020,56 @@ public class JSONSchemaForXMLTest {
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays9\":[[1,2,3],[],[5,6,7,8]]}")));
 			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays10><arrayOfArrays10><arrayOfArrays10>1</arrayOfArrays10><arrayOfArrays10>2</arrayOfArrays10><arrayOfArrays10>3</arrayOfArrays10></arrayOfArrays10><arrayOfArrays10></arrayOfArrays10><arrayOfArrays10><arrayOfArrays10>5</arrayOfArrays10><arrayOfArrays10>6</arrayOfArrays10><arrayOfArrays10>7</arrayOfArrays10><arrayOfArrays10>8</arrayOfArrays10></arrayOfArrays10></arrayOfArrays10></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays10\":[[1,2,3],[],[5,6,7,8]]}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>1</ns1:arrayOfArrays11><ns1:arrayOfArrays11>2</ns1:arrayOfArrays11><ns1:arrayOfArrays11>3</ns1:arrayOfArrays11></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>5</ns1:arrayOfArrays11><ns1:arrayOfArrays11>6</ns1:arrayOfArrays11><ns1:arrayOfArrays11>7</ns1:arrayOfArrays11><ns1:arrayOfArrays11>8</ns1:arrayOfArrays11></ns1:arrayOfArrays11></arrayOfArrays11></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays11\":[[1,2,3],[],[5,6,7,8]]}")));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
 
+		try {
+			//invalid namespace
+			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays11 xmlns:ns1=\"http://test2.com\"><ns1:arrayOfArrays11><ns1:arrayOfArrays11>1</ns1:arrayOfArrays11><ns1:arrayOfArrays11>2</ns1:arrayOfArrays11><ns1:arrayOfArrays11>3</ns1:arrayOfArrays11></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>5</ns1:arrayOfArrays11><ns1:arrayOfArrays11>6</ns1:arrayOfArrays11><ns1:arrayOfArrays11>7</ns1:arrayOfArrays11><ns1:arrayOfArrays11>8</ns1:arrayOfArrays11></ns1:arrayOfArrays11></arrayOfArrays11></root>");
+			fail("invalid namespace should throw exception");
+		}
+		catch(MapException e) {
+			assertTrue(e.toString().indexOf("Invalid namespace") != -1);
+			assertTrue(e.toString().indexOf("path: /root/arrayOfArrays11/ns1:arrayOfArrays11") != -1);			
+		}	
+
 	}
 	
-//	@Test
-//	public void testJSONSchemaForXML_Definitions() {
-//		String schema = null;
-//		JSONObject o = null;
-//		try {
-//			schema = convert(this.getClass().getClassLoader().getResourceAsStream(JSON_TEST_FILES_FOLDER + "definitions.json"), Charset.defaultCharset());
-//			assertTrue(schema.indexOf("$schema") != -1); //load string ok
-//		} catch (IOException e) {
-//			fail("Failed to load pkg2/definitions.json, e=" + e);
-//			return;
-//		}
-//		JSONSchemaForXML jsonSchemaForXML = null;
-//		try {
-//			jsonSchemaForXML = new JSONSchemaForXML(schema);
-//		} catch(JSONSchemaLoadException e) {
-//			e.printStackTrace();
-//			fail("Failed to parse schema, e=" + e);
-//			return;
-//		}
-//
-//		try {
-//			//empty structure
-//			o = jsonSchemaForXML.mapXMLToJSON("<root><shipping_address><city>Washington</city></shipping_address></root>");
-//			assertTrue(JSONComparator.compareJSON(o, new JSONObject("{\"shipping_address\":{\"city\":\"Washington\"}}")));
-//		}
-//		catch(MapException e) {
-//			e.printStackTrace();
-//			fail("Should not throw exception: " + e);
-//		}
-//	}
+	@Test
+	public void testJSONSchemaForXML_Definitions() {
+		String schema = null;
+		JSONObject o = null;
+		String resourceName = JSON_TEST_FILES_FOLDER + "schema_definitions.json";
+		try {
+			schema = convertInputStreamToString(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
+			assertTrue(schema.indexOf("$schema") != -1); //load string ok
+		} catch (IOException e) {
+			fail("Failed to load " + resourceName + ", e=" + e);
+			return;
+		}
+
+		JSONSchemaForXML jsonSchemaForXML = null;
+		try {
+			jsonSchemaForXML = new JSONSchemaForXML(schema);
+		} catch(JSONSchemaLoadException e) {
+			e.printStackTrace();
+			fail("Failed to parse schema, e=" + e);
+			return;
+		}
+
+		try {
+			//empty structure
+			o = jsonSchemaForXML.mapXMLToJSON("<root><shipping_address><city>Washington</city></shipping_address></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"shipping_address\":{\"city\":\"Washington\"}}")));
+		}
+		catch(MapException e) {
+			e.printStackTrace();
+			fail("Should not throw exception: " + e);
+		}
+	}
 }

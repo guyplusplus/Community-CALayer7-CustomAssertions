@@ -280,6 +280,23 @@
       "xml": {
         "wrapped": true
       }
-    }    
+    },
+    "arrayOfArrays11": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        },
+        "xml": {
+          "wrapped": true,
+          "prefix": "ns1",
+          "namespace": "http://test.com"
+        }
+      },
+      "xml": {
+        "wrapped": true
+      }
+    }      
   }
 }
