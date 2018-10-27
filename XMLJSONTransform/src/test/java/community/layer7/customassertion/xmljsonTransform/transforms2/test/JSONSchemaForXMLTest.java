@@ -289,7 +289,7 @@ public class JSONSchemaForXMLTest {
 		}
 		catch(MapException e) {
 			//ok
-			assertTrue(e.toString().indexOf("Failure to convert value to a number") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to a number") != -1);
 			assertTrue(e.toString().indexOf("path: /root/aNumber") != -1);
 		}
 
@@ -331,7 +331,7 @@ public class JSONSchemaForXMLTest {
 		}
 		catch(MapException e) {
 			//ok
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/anInteger") != -1);
 		}
 		try {
@@ -341,7 +341,7 @@ public class JSONSchemaForXMLTest {
 		}
 		catch(MapException e) {
 			//ok
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/anInteger") != -1);
 		}
 		try {
@@ -362,7 +362,7 @@ public class JSONSchemaForXMLTest {
 		}
 		catch(MapException e) {
 			//ok
-			assertTrue(e.toString().indexOf("Failure to convert value to a boolean") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to a boolean") != -1);
 			assertTrue(e.toString().indexOf("path: /root/aBoolean") != -1);
 		}
 		try {
@@ -372,7 +372,7 @@ public class JSONSchemaForXMLTest {
 		}
 		catch(MapException e) {
 			//ok
-			assertTrue(e.toString().indexOf("Failure to convert value to a boolean") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to a boolean") != -1);
 			assertTrue(e.toString().indexOf("path: /root/aBoolean") != -1);
 		}
 		try {
@@ -382,7 +382,7 @@ public class JSONSchemaForXMLTest {
 		}
 		catch(MapException e) {
 			//ok
-			assertTrue(e.toString().indexOf("Failure to convert value to a null") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to a null") != -1);
 			assertTrue(e.toString().indexOf("path: /root/aNull") != -1);
 		}
 		try {
@@ -639,7 +639,7 @@ public class JSONSchemaForXMLTest {
 			fail("invalid integer property should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/@xmlint1") != -1);			
 		}
 		
@@ -649,7 +649,7 @@ public class JSONSchemaForXMLTest {
 			fail("invalid integer property should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/@xmlint1") != -1);			
 		}
 		
@@ -762,7 +762,7 @@ public class JSONSchemaForXMLTest {
 			fail("invalid integer property should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/relationships[2]/age") != -1);			
 		}
 		
@@ -920,7 +920,7 @@ public class JSONSchemaForXMLTest {
 			fail("invalid integer property should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/OBJECTS_1/OBJECT_1[2]/@age") != -1);			
 		}	
 
@@ -955,7 +955,7 @@ public class JSONSchemaForXMLTest {
 			fail("invalid integer property should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/ARRAYS/ARRAY[1]/INT[3]") != -1);			
 		}	
 
@@ -965,7 +965,7 @@ public class JSONSchemaForXMLTest {
 			fail("invalid integer property should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/ARRAYS/ARRAY[1]/INT[3]") != -1);			
 		}	
 
@@ -975,7 +975,7 @@ public class JSONSchemaForXMLTest {
 			fail("invalid integer property should throw exception");
 		}
 		catch(MapException e) {
-			assertTrue(e.toString().indexOf("Failure to convert value to an integer") != -1);
+			assertTrue(e.toString().indexOf("Failure to convert text to an integer") != -1);
 			assertTrue(e.toString().indexOf("path: /root/ARRAYS/ARRAY[2]/INT[2]") != -1);			
 		}	
 

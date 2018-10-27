@@ -304,7 +304,7 @@ public class XMLToJSONConverter {
 		else if(charactersTrimmed.equalsIgnoreCase("null"))
 			return JSONObject.NULL;
 		else if(nodeType == XMLNodeSpec.TYPE_NULL) {
-			throw new MapException("Failure to convert value to a null", xpath);
+			throw new MapException("Failure to convert text to a null", xpath);
 		}
 		else if(nodeType == XMLNodeSpec.TYPE_BOOLEAN) {
 			if(charactersTrimmed.equalsIgnoreCase("true"))
@@ -312,7 +312,7 @@ public class XMLToJSONConverter {
 			else if(charactersTrimmed.equalsIgnoreCase("false"))
 				return Boolean.FALSE;
 			else
-				throw new MapException("Failure to convert value to a boolean", xpath);
+				throw new MapException("Failure to convert text to a boolean", xpath);
 		}
 		else if(nodeType == XMLNodeSpec.TYPE_INTEGER) {
 			try {
@@ -323,14 +323,14 @@ public class XMLToJSONConverter {
 				else
 					return Integer.parseInt(charactersTrimmed);
 			} catch (NumberFormatException e) {
-				throw new MapException("Failure to convert value to an integer", xpath);
+				throw new MapException("Failure to convert text to an integer", xpath);
 			}
 		}
 		else if(nodeType == XMLNodeSpec.TYPE_NUMBER) {
 			try {
 				return new BigDecimal(charactersTrimmed);
 			} catch (NumberFormatException e) {
-				throw new MapException("Failure to convert value to a number", xpath);
+				throw new MapException("Failure to convert text to a number", xpath);
 			}
 		}
 		else
