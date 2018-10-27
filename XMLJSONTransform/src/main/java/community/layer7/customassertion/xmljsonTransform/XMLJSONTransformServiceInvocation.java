@@ -9,8 +9,8 @@ import com.l7tech.policy.assertion.ext.CustomAssertionStatus;
 import com.l7tech.policy.assertion.ext.ServiceInvocation;
 import com.l7tech.policy.assertion.ext.message.CustomPolicyContext;
 
-import community.layer7.customassertion.xmljsonTransform.transforms.JSONSchemaForXML;
-import community.layer7.customassertion.xmljsonTransform.transforms.SchemaCache;
+import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaForXML;
+import community.layer7.customassertion.xmljsonTransform.cache.SchemaCache;
 
 public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
     

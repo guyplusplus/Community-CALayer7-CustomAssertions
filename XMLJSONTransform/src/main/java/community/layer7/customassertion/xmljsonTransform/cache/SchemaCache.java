@@ -1,8 +1,11 @@
-package community.layer7.customassertion.xmljsonTransform.transforms2;
+package community.layer7.customassertion.xmljsonTransform.cache;
 
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaForXML;
+import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaLoadException;
 
 public class SchemaCache {
 	

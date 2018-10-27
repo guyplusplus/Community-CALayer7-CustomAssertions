@@ -33,7 +33,7 @@ import javax.swing.border.TitledBorder;
 
 import org.json.JSONObject;
 
-import community.layer7.customassertion.xmljsonTransform.transforms.JSONSchemaForXML;
+import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaForXML;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

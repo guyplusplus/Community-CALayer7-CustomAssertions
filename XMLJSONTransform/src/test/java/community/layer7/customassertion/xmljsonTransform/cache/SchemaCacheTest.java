@@ -1,12 +1,12 @@
-package community.layer7.customassertion.xmljsonTransform.transforms.test;
+package community.layer7.customassertion.xmljsonTransform.cache;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import community.layer7.customassertion.xmljsonTransform.transforms.JSONSchemaForXML;
-import community.layer7.customassertion.xmljsonTransform.transforms.JSONSchemaLoadException;
-import community.layer7.customassertion.xmljsonTransform.transforms.SchemaCache;
+import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaForXML;
+import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaLoadException;
+import community.layer7.customassertion.xmljsonTransform.cache.SchemaCache;
 
 public class SchemaCacheTest {
 	
