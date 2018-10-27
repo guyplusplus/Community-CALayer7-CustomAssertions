@@ -94,7 +94,7 @@ public class XMLToJSONConverter {
 			XMLNodeSpecArray xmlNodeSpecArray = (XMLNodeSpecArray)xmlNodeSpec;
 			if(!xmlNodeSpecArray.isXMLWrapped())
 				return parseJSONValue(reader, xmlNodeSpecArray.getItemsXMLNodeSpec(), xpath, fqElementName);
-			return parseJSONArrayWrapped(reader, xmlNodeSpecArray, xpath, xmlNodeSpecArray.calculateTargetFullXMLName(fqElementName));
+			return parseJSONArrayWrapped(reader, xmlNodeSpecArray, xpath, fqElementName);
 		}
 		return parseJSONSimpleValue(reader, (XMLNodeSpecSimpleValue)xmlNodeSpec, xpath);
 	}
@@ -124,8 +124,12 @@ public class XMLToJSONConverter {
 					//check fqElementName is correct
 					XMLNodeSpec itemsXMLNodeSpec = xmlNodeSpecArray.getItemsXMLNodeSpec();
 					String expectedFQElementName = itemsXMLNodeSpec.calculateTargetFullXMLName(wrapperFQElementName);
+					System.err.println("fqElementName=" + fqElementName + ", expectedFQElementName=" + expectedFQElementName + "|");
 					if(!fqElementName.equals(expectedFQElementName))
-						throw new MapException("Wrapped element name is invalid", startElementXPath);
+						throw new MapException("Wrapped element name is not matching specifications", startElementXPath);
+					if(itemsXMLNodeSpec.getXmlPrefix() != null && itemsXMLNodeSpec.getXmlNamespace() != null)
+						if(!itemsXMLNodeSpec.getXmlNamespace().equals(reader.getNamespaceURI()))
+							throw new MapException("Invalid namespace", startElementXPath);
 					startElementXPath += "[" + (array.length() + 1) + "]";
 					Object childElement = parseJSONValue(reader, itemsXMLNodeSpec, startElementXPath, fqElementName);
 					array.put(childElement);
