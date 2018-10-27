@@ -25,13 +25,8 @@ public class XMLNodeSpecArray extends XMLNodeSpec {
 
 	@Override
 	public String calculateTargetFullXMLName(String objectName) {
-		if(isXMLWrapped) {
-			//in case of wrapped array, return value if either xmlName or xmlPrefix is defined
-			if(xmlName != null || xmlPrefix != null) {
-				String prefix = (xmlPrefix == null ? "" : xmlPrefix + ":");
-				return prefix + (xmlName == null ? objectName : xmlName);
-			}
-		}
+		if(isXMLWrapped)
+			return super.calculateTargetFullXMLName(objectName);
 		//then need to look at inner object
 		return itemsXMLNodeSpec.calculateTargetFullXMLName(objectName);
 	}

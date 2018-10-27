@@ -75,6 +75,7 @@
         }
       }
     },
+    
     "objects1": {
       "type": "array",
       "items": {
@@ -99,6 +100,7 @@
      	"wrapped": true
       }
     },
+
     "arrayOfArrays": {
       "type": "array",
       "items": {
@@ -157,6 +159,127 @@
         "name": "ARRAYS3",
         "wrapped": true
       }
-    }
+    },
+    
+    "arrayOfArrays4": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        },
+        "xml": {
+          "name": "ARRAY",
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "name": "ARRAYS4",
+        "wrapped": true
+      }
+    },
+    "arrayOfArrays5": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "xml": {
+            "name": "INT"
+          }
+        },
+        "xml": {
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "name": "ARRAYS5",
+        "wrapped": true
+      }
+    },
+    "arrayOfArrays6": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        },
+        "xml": {
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "name": "ARRAYS6",
+        "wrapped": true
+      }
+    },
+    "arrayOfArrays7": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "xml": {
+            "name": "INT"
+          }
+        },
+        "xml": {
+          "name": "ARRAY",
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "wrapped": true
+      }
+    },
+    "arrayOfArrays8": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        },
+        "xml": {
+          "name": "ARRAY",
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "wrapped": true
+      }
+    },
+    "arrayOfArrays9": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "xml": {
+            "name": "INT"
+          }
+        },
+        "xml": {
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "wrapped": true
+      }
+    },
+    "arrayOfArrays10": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        },
+        "xml": {
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "wrapped": true
+      }
+    }    
   }
 }

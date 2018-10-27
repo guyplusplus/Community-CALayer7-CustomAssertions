@@ -53,7 +53,7 @@ public class JSONSchemaForXML {
 				throw new JSONSchemaLoadException("JSON schema top element must be of type 'object'");
 			}
 			XMLNodeSpecObject rootXMLNodeSpecObject = new XMLNodeSpecObject();
-			rootXMLNodeSpecObject.loadJSONValue(schema, "schema root object");
+			rootXMLNodeSpecObject.loadJSONValue(schema, "$");
 			return new PropertyXMLNodeSpec(DEFAULT_XML_ROOT_ELEMENT_NAME, null, rootXMLNodeSpecObject);
 		}
 		catch(JSONException e) {

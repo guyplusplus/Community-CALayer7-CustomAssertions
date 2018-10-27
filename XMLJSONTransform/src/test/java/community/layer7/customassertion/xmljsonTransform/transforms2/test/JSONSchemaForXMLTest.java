@@ -703,7 +703,7 @@ public class JSONSchemaForXMLTest {
 		}
 	}
 
-	//Test
+	@Test
 	public void testJSONSchema_Arrays() {
 		String schema = null;
 		JSONObject o = null;
@@ -719,9 +719,29 @@ public class JSONSchemaForXMLTest {
 		try {
 			jsonSchemaForXML = new JSONSchemaForXML(schema);
 		} catch(JSONSchemaLoadException e) {
+			e.printStackTrace();
 			fail("Failed to parse schema, e=" + e);
 			return;
 		}
+		
+		//relationship is non wrapped array, no name change
+		//phones1 is non wrapped array, name change none
+		//phones2 is non wrapped array, name change items
+		//phones3 is wrapped array,     name change wrapper and items
+		//phones4 is wrapped array,     name change wrapper
+		//
+		//array_n are 3 layers of array
+		//arrayOfArrays :	wrapped(renamed)		wrapped(renamed)		int(renamed)  
+		//arrayOfArrays2 :	not wrapped				wrapped(renamed)		int(renamed)  
+
+		//arrayOfArrays3 :	wrapped(renamed)		wrapped(renamed)		string(renamed)   
+		//arrayOfArrays4 :	wrapped(renamed)		wrapped(renamed)		int(not renamed)  
+		//arrayOfArrays5 :	wrapped(renamed)		wrapped(not renamed)	int(renamed)  
+		//arrayOfArrays6 :	wrapped(renamed)		wrapped(not renamed)	int(not renamed)  
+		//arrayOfArrays7 :	wrapped(not renamed)	wrapped(renamed)		int(renamed)  
+		//arrayOfArrays8 :	wrapped(not renamed)	wrapped(renamed)		int(not renamed)  
+		//arrayOfArrays9 :	wrapped(not renamed)	wrapped(not renamed)	int(renamed)  
+		//arrayOfArrays10 :	wrapped(not renamed)	wrapped(not renamed)	int(not renamed)  
 
 		try {
 			//empty structure
@@ -800,6 +820,16 @@ public class JSONSchemaForXMLTest {
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"phones3\":[\"123\"]}")));
 			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONES_3><PHONE_3>123</PHONE_3><PHONE_3>456</PHONE_3></PHONES_3></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"phones3\":[\"123\",\"456\"]}")));
+			
+			//array item is a simple string
+			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONES_4></PHONES_4></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"phones4\":[]}")));
+			//array item is a simple string
+			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONES_4><PHONES_4></PHONES_4></PHONES_4></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"phones4\":[\"\"]}")));
+			//array item is a simple string
+			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONES_4><PHONES_4>123</PHONES_4></PHONES_4></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"phones4\":[\"123\"]}")));
 		}
 		catch(MapException e) {
 			e.printStackTrace();
@@ -814,6 +844,36 @@ public class JSONSchemaForXMLTest {
 		catch(MapException e) {
 			assertTrue(e.toString().indexOf("Duplicated element") != -1);
 			assertTrue(e.toString().indexOf("path: /root/PHONES_3") != -1);			
+		}
+		
+		try {
+			//wrapped array, duplicated wrapped entry
+			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONES_4><PHONES_4>1</PHONES_4><PHONES_4>2</PHONES_4></PHONES_4><PHONES_4><PHONES_4>4</PHONES_4><PHONES_4>4</PHONES_4></PHONES_4></root>");
+			fail("wrapped array, duplicated wrapped entry - should throw exception");
+		}
+		catch(MapException e) {
+			assertTrue(e.toString().indexOf("Duplicated element") != -1);
+			assertTrue(e.toString().indexOf("path: /root/PHONES_4") != -1);			
+		}
+		
+		try {
+			//wrapped array, wrapped entry is wrong name
+			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONES_3><PHONE_3>1</PHONE_3><PHONE_3>2</PHONE_3><PHONE_33>3</PHONE_33></PHONES_3></root>");
+			fail("wrapped entry is wrong name - should throw exception");
+		}
+		catch(MapException e) {
+			assertTrue(e.toString().indexOf("Wrapped element name is invalid") != -1);
+			assertTrue(e.toString().indexOf("path: /root/PHONES_3/PHONE_33") != -1);			
+		}
+		
+		try {
+			//wrapped array, wrapped entry is wrong name
+			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONES_4><PHONES_4>1</PHONES_4><PHONES_4>2</PHONES_4><PHONES_44>4</PHONES_44></PHONES_4></root>");
+			fail("wrapped entry is wrong name - should throw exception");
+		}
+		catch(MapException e) {
+			assertTrue(e.toString().indexOf("Wrapped element name is invalid") != -1);
+			assertTrue(e.toString().indexOf("path: /root/PHONES_4/PHONES_44") != -1);			
 		}
 		
 		try {
@@ -851,7 +911,6 @@ public class JSONSchemaForXMLTest {
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"objects1\":[{},{}],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[]}")));
 		}
 		catch(MapException e) {
-			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
 
@@ -946,6 +1005,21 @@ public class JSONSchemaForXMLTest {
 			//array item is a simple integers
 			o = jsonSchemaForXML.mapXMLToJSON("<root><ARRAYS3><ARRAY3><STRING>1</STRING><STRING></STRING><STRING>3</STRING></ARRAY3></ARRAYS3></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays3\":[[\"1\",\"\",\"3\"]]}")));
+			
+			o = jsonSchemaForXML.mapXMLToJSON("<root><ARRAYS4><ARRAY><ARRAY>1</ARRAY><ARRAY>2</ARRAY><ARRAY>3</ARRAY></ARRAY><ARRAY></ARRAY><ARRAY><ARRAY>5</ARRAY><ARRAY>6</ARRAY><ARRAY>7</ARRAY><ARRAY>8</ARRAY></ARRAY></ARRAYS4></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays4\":[[1,2,3],[],[5,6,7,8]]}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><ARRAYS5><ARRAYS5><INT>1</INT><INT>2</INT><INT>3</INT></ARRAYS5><ARRAYS5></ARRAYS5><ARRAYS5><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></ARRAYS5></ARRAYS5></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays5\":[[1,2,3],[],[5,6,7,8]]}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><ARRAYS6><ARRAYS6><ARRAYS6>1</ARRAYS6><ARRAYS6>2</ARRAYS6><ARRAYS6>3</ARRAYS6></ARRAYS6><ARRAYS6></ARRAYS6><ARRAYS6><ARRAYS6>5</ARRAYS6><ARRAYS6>6</ARRAYS6><ARRAYS6>7</ARRAYS6><ARRAYS6>8</ARRAYS6></ARRAYS6></ARRAYS6></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays6\":[[1,2,3],[],[5,6,7,8]]}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays7><ARRAY><INT>1</INT><INT>2</INT><INT>3</INT></ARRAY><ARRAY></ARRAY><ARRAY><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></ARRAY></arrayOfArrays7></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays7\":[[1,2,3],[],[5,6,7,8]]}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays8><ARRAY><ARRAY>1</ARRAY><ARRAY>2</ARRAY><ARRAY>3</ARRAY></ARRAY><ARRAY></ARRAY><ARRAY><ARRAY>5</ARRAY><ARRAY>6</ARRAY><ARRAY>7</ARRAY><ARRAY>8</ARRAY></ARRAY></arrayOfArrays8></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays8\":[[1,2,3],[],[5,6,7,8]]}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays9><arrayOfArrays9><INT>1</INT><INT>2</INT><INT>3</INT></arrayOfArrays9><arrayOfArrays9></arrayOfArrays9><arrayOfArrays9><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></arrayOfArrays9></arrayOfArrays9></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays9\":[[1,2,3],[],[5,6,7,8]]}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays10><arrayOfArrays10><arrayOfArrays10>1</arrayOfArrays10><arrayOfArrays10>2</arrayOfArrays10><arrayOfArrays10>3</arrayOfArrays10></arrayOfArrays10><arrayOfArrays10></arrayOfArrays10><arrayOfArrays10><arrayOfArrays10>5</arrayOfArrays10><arrayOfArrays10>6</arrayOfArrays10><arrayOfArrays10>7</arrayOfArrays10><arrayOfArrays10>8</arrayOfArrays10></arrayOfArrays10></arrayOfArrays10></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays10\":[[1,2,3],[],[5,6,7,8]]}")));
 		}
 		catch(Exception e) {
 			e.printStackTrace();

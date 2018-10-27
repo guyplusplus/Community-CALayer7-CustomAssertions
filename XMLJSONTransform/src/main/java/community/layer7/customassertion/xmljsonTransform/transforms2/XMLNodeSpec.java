@@ -66,14 +66,6 @@ public abstract class XMLNodeSpec {
 		return xmlNamespace;
 	}
 
-//	public boolean isXMLAttribute() throws JSONSchemaLoadException {
-//		throw new JSONSchemaLoadException("isAttribute() is not allowed for this node type: " + nodeType);
-//	}
-//
-//	public boolean isXMLWrapped() throws JSONSchemaLoadException {
-//		throw new JSONSchemaLoadException("isWrapped() is not allowed for this node type: " + nodeType);
-//	}
-	
 	private void loadXML(JSONObject xml) {
 		if(xml == null)
 			return;
@@ -82,7 +74,6 @@ public abstract class XMLNodeSpec {
 		xmlNamespace = xml.optString("namespace", null);
 		isXMLAttribute = xml.optBoolean("attribute", false);
 		isXMLWrapped = xml.optBoolean("wrapped", false);
-		//constructFullXMLName();
 	}
 	
 	public void loadJSONValue(JSONObject schema, String valueDesriptionForException) throws JSONSchemaLoadException {
