@@ -9,4 +9,9 @@ public class XMLNodeSpecSimpleValue extends XMLNodeSpec {
 	public boolean isXMLAttribute() {
 		return isXMLAttribute;
 	}
+	@Override
+	public boolean isSimpleValue() {
+		return true;
+	}
+	
 }

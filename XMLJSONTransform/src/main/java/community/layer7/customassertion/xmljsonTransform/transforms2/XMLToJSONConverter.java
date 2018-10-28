@@ -59,17 +59,17 @@ public class XMLToJSONConverter {
 				int eventType = reader.next();
 				if(eventType == XMLStreamConstants.CHARACTERS) {
 					if(reader.isWhiteSpace()) {
-						System.out.println(xpath + " CHARACTERS white spaces, ignore");
+						//System.out.println(xpath + " CHARACTERS white spaces, ignore");
 						continue;
 					}
 					throw new MapException("Characters at this location are not allowed", xpath);
 				}
 				else if(eventType == XMLStreamConstants.END_ELEMENT) {
-					System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
+					//System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
 					throw new MapException("End element not allowed", xpath);
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
-					System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
+					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
 					break;
 				}
 				else if(eventType == XMLStreamConstants.END_DOCUMENT) {
@@ -108,23 +108,22 @@ public class XMLToJSONConverter {
 				int eventType = reader.next();
 				if(eventType == XMLStreamConstants.CHARACTERS) {
 					if(reader.isWhiteSpace()) {
-						System.out.println(xpath + " CHARACTERS white spaces, ignore");
+						//System.out.println(xpath + " CHARACTERS white spaces, ignore");
 						continue;
 					}
 					throw new MapException("Characters at this location are not allowed", xpath);
 				}
 				else if(eventType == XMLStreamConstants.END_ELEMENT) {
-					System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
+					//System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
 					break;
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
-					System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
+					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
 					String fqElementName = calculateFQElementName(reader);
 					String startElementXPath = xpath + "/" + fqElementName;
 					//check fqElementName is correct
 					XMLNodeSpec itemsXMLNodeSpec = xmlNodeSpecArray.getItemsXMLNodeSpec();
 					String expectedFQElementName = itemsXMLNodeSpec.calculateTargetFullXMLName(wrapperFQElementName);
-					System.err.println("fqElementName=" + fqElementName + ", expectedFQElementName=" + expectedFQElementName + "|");
 					if(!fqElementName.equals(expectedFQElementName))
 						throw new MapException("Wrapped element name is not matching specifications", startElementXPath);
 					if(itemsXMLNodeSpec.getXmlPrefix() != null && itemsXMLNodeSpec.getXmlNamespace() != null)
@@ -162,17 +161,17 @@ public class XMLToJSONConverter {
 				int eventType = reader.next();
 				if(eventType == XMLStreamConstants.CHARACTERS) {
 					if(characters.length() == 0 && reader.isWhiteSpace()) {
-						System.out.println(xpath + " CHARACTERS white spaces, ignore");
+						//System.out.println(xpath + " CHARACTERS white spaces, ignore");
 						continue;
 					}
 					characters += reader.getText();
 				}
 				else if(eventType == XMLStreamConstants.END_ELEMENT) {
-					System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
+					//System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
 					break;
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
-					System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
+					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
 					throw new MapException("New XML element not allowed for a simple property (string, boolean, integer, number)", xpath + "/" + reader.getLocalName());
 				}
 				else if(eventType == XMLStreamConstants.END_DOCUMENT) {
@@ -195,12 +194,11 @@ public class XMLToJSONConverter {
 	}
 
 	static private JSONObject parseJSONObject(XMLStreamReader reader, XMLNodeSpecObject xmlNodeSpecObject, String xpath) throws MapException {
-		System.out.println("parseJSONObject xpath:" + xpath);
 		JSONObject o = new JSONObject();
 		//add non wrapped arrays. When a wrapped array comes in, then the json array is added
 		for(String jsonArrayName:xmlNodeSpecObject.getNonWrappedJSONArrayNames()) {
 			o.put(jsonArrayName, new JSONArray());
-			System.out.println("--- proactive add array: " + jsonArrayName + " for xpath: " + xpath);
+			//System.out.println("--- proactive add array: " + jsonArrayName + " for xpath: " + xpath);
 		}
 		try {
 			//handle attributes
@@ -215,8 +213,8 @@ public class XMLToJSONConverter {
 				PropertyXMLNodeSpec attributePropertyXMLNodeSpec = xmlNodeSpecObject.getAttributePropertyXMLNodeSpecByName(fqAttributeName);
 				if(attributePropertyXMLNodeSpec == null)
 					throw new MapException("Attribute not found in JSON schema", attributeXPath);
-				if(!(attributePropertyXMLNodeSpec.getXmlNodeSpec() instanceof XMLNodeSpecSimpleValue))
-					throw new MapException("Attribute should be a simple type (boolean, integer, number, string)", attributeXPath);
+				if(!(attributePropertyXMLNodeSpec.getXmlNodeSpec().isSimpleValue()))
+					throw new MapException("Attribute should be a simple type (boolean, integer, number, string, null)", attributeXPath);
 				if(prefixName != null && attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace() != null)
 					if(!attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace().equals(reader.getAttributeNamespace(attributeIndex)))
 						throw new MapException("Invalid namespace", attributeXPath);
@@ -229,19 +227,19 @@ public class XMLToJSONConverter {
 				int eventType = reader.next();
 				if(eventType == XMLStreamConstants.CHARACTERS) {
 					if(reader.isWhiteSpace()) {
-						System.out.println(xpath + " CHARACTERS white spaces, ignore");
+						//System.out.println(xpath + " CHARACTERS white spaces, ignore");
 						continue;
 					}
 					throw new MapException("Characters at this location are not allowed", xpath);
 				}
 				else if(eventType == XMLStreamConstants.END_ELEMENT) {
-					System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
+					//System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
 					break;
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					String fqElementName = calculateFQElementName(reader);
 					String startElementXPath = xpath + "/" + fqElementName;
-					System.out.println(xpath + " START_ELEMENT: " + fqElementName);
+					//System.out.println(xpath + " START_ELEMENT: " + fqElementName);
 					PropertyXMLNodeSpec childElementPropertyXMLNodeSpec = xmlNodeSpecObject.getChildElementPropertyXMLNodeSpecByName(fqElementName);
 					if(childElementPropertyXMLNodeSpec == null)
 						throw new MapException("Element not found in JSON schema", startElementXPath);
@@ -288,7 +286,6 @@ public class XMLToJSONConverter {
 	}
 
 	static private void addKeyValueToJSONObject(String key, Object value, JSONObject o, String path, boolean isAppendKeyToArray) throws MapException {
-		System.out.println(" (1) o.put KEY=" + key);		
 		if(isAppendKeyToArray) {
 			o.append(key, value);
 			return;

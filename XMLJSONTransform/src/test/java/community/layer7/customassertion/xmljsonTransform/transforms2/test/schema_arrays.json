@@ -297,6 +297,25 @@
       "xml": {
         "wrapped": true
       }
+    },
+    "arrayOfArrays12": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "xml": {
+	          "prefix": "ns2",
+	          "namespace": "http://test.com"
+          }
+        },
+        "xml": {
+          "wrapped": true
+        }
+      },
+      "xml": {
+        "wrapped": true
+      }
     }      
   }
 }

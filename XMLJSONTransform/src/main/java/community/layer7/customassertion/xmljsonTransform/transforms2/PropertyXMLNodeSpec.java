@@ -23,5 +23,9 @@ public class PropertyXMLNodeSpec {
 	public String getRef() {
 		return ref;
 	}
+	
+	public void setPropertyXMLNodeSpec(XMLNodeSpec xmlNodeSpec) {
+		this.xmlNodeSpec = xmlNodeSpec;
+	}
 
 }

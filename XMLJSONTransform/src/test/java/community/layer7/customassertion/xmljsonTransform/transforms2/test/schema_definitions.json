@@ -5,11 +5,56 @@
     "address": {
       "type": "object",
       "properties": {
+        "id":             { "$ref": "#/definitions/address_id" },
+        "destination":    { "$ref": "#/definitions/person" },
         "street_address": { "type": "string" },
         "city":           { "type": "string" },
-        "state":          { "type": "string" }
+        "state":          { "$ref": "#/definitions/us_state" },
+        "zipcode":        { "$ref": "#/definitions/us_zipcode" },
+        "phones":         { "$ref": "#/definitions/phoneNbs" }
       },
       "required": ["street_address", "city", "state"]
+    },
+    "address_id": {
+      "type": "integer",
+      "xml": {
+      	"attribute": true
+      }
+    },
+    "us_state": {
+      "type": "string"
+    },
+    "us_zipcode": {
+      "type": "integer",
+      "xml": {
+      	"name": "ZIPCODE"
+      }
+    },
+    "person" : {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/person" }
+        }
+      }
+    },
+    "phoneNbs": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/phoneNb" },
+      "xml": {
+        "name": "PHONES",
+        "wrapped": true
+      }
+    },
+    "phoneNb": {
+      "type": "integer",
+      "xml": {
+        "name": "PHONE"
+      }
     }
   },
 

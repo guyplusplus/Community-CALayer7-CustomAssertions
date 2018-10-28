@@ -46,8 +46,6 @@ Schema caching is controlled with the 3 cluster properties:
 Every 5 minutes these values will be refreshed.
 
 TODO (by order of priority):
-* support for $ref
-  * included ref entries in definitions section
 * JSON to XML
 * additionalProperties support:
   * true or false

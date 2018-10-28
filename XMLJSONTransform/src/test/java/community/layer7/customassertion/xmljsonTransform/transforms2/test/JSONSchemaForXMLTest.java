@@ -83,6 +83,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			jsonSchemaForXML = new JSONSchemaForXML(schema);
 		} catch(JSONSchemaLoadException e) {
+			e.printStackTrace();
 			fail("Failed to parse schema, e=" + e);
 			return;
 		}
@@ -255,7 +256,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><aString>1\n2\t3&amp;4 \n    \n &quot;5/6\\7</aString></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aString\":\"1\\n2\\t3&4 \\n    \\n \\\"5/6\\\\7\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -277,7 +278,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><aString>aaa</aString>  \t  \n  \t   <aNumber>-123.456000</aNumber></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":-123.456,\"aString\":\"aaa\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -320,7 +321,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><anInteger>-123456789012345678901234567890</anInteger></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"anInteger\":-123456789012345678901234567890}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -351,7 +352,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><aBoolean> \t \n FAlse     \t \n   \t   </aBoolean></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aBoolean\":false}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -406,7 +407,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><aString>aaa</aString><anObject></anObject><aNumber>123.456</aNumber></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":123.456,\"aString\":\"aaa\",\"anObject\":{}}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -438,6 +439,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			jsonSchemaForXML = new JSONSchemaForXML(schema);
 		} catch(JSONSchemaLoadException e) {
+			e.printStackTrace();
 			fail("Failed to parse schema, e=" + e);
 			return;
 		}
@@ -481,7 +483,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><pref5:xmlstr5 xmlns:pref5=\"http://example.com/schema\"></pref5:xmlstr5></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str5\":\"\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -514,6 +516,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			jsonSchemaForXML = new JSONSchemaForXML(schema);
 		} catch(JSONSchemaLoadException e) {
+			e.printStackTrace();
 			fail("Failed to parse schema, e=" + e);
 			return;
 		}
@@ -533,7 +536,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><xmlstr2></xmlstr2></soap:xmlroot>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str2\":\"\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -564,6 +567,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			jsonSchemaForXML = new JSONSchemaForXML(schema);
 		} catch(JSONSchemaLoadException e) {
+			e.printStackTrace();
 			fail("Failed to parse schema, e=" + e);
 			return;
 		}
@@ -580,7 +584,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root str1=\"\tbbb\t\"><str0>aaa</str0></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str1\":\"bbb\",\"str0\":\"aaa\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -628,7 +632,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root xmlstr2=\"     \" xmlint1=\"     12345678901234567890     \"><str0>aaa</str0></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"int1\":12345678901234567890,\"str2\":\"\",\"str0\":\"aaa\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -658,7 +662,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root xmlns:pref3=\"http://example.com/schema\" pref3:str3=\"bbb\"><str0>aaa</str0></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str3\":\"bbb\",\"str0\":\"aaa\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -668,7 +672,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root xmlns:pref4=\"http://example.com/schema\" pref4:str4=\"bbb\"><str0>aaa</str0></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str4\":\"bbb\",\"str0\":\"aaa\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -697,7 +701,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root xmlns:pref5=\"http://example.com/schema\" pref5:xmlstr5=\"bbb\"><str0>aaa</str0></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str5\":\"bbb\",\"str0\":\"aaa\"}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -751,7 +755,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><relationships><name>name 1</name></relationships><relationships><name>name 2</name><age>17</age></relationships></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[{\"name\":\"name 1\"},{\"name\":\"name 2\",\"age\":17}],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[]}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -793,7 +797,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONE_2>p1</PHONE_2><aString>abc</aString><PHONE_2>p2</PHONE_2></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"aString\":\"abc\",\"phones2\":[\"p1\",\"p2\"],\"arrayOfArrays2\":[],\"phones1\":[]}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -831,7 +835,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONES_4><PHONES_4>123</PHONES_4></PHONES_4></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"phones4\":[\"123\"]}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}
@@ -910,7 +914,7 @@ public class JSONSchemaForXMLTest {
 			o = jsonSchemaForXML.mapXMLToJSON("<root><OBJECTS_1><OBJECT_1></OBJECT_1><OBJECT_1></OBJECT_1></OBJECTS_1></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"objects1\":[{},{}],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[]}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			fail("Should not throw exception: " + e);
 		}
 
@@ -1022,6 +1026,8 @@ public class JSONSchemaForXMLTest {
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays10\":[[1,2,3],[],[5,6,7,8]]}")));
 			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>1</ns1:arrayOfArrays11><ns1:arrayOfArrays11>2</ns1:arrayOfArrays11><ns1:arrayOfArrays11>3</ns1:arrayOfArrays11></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>5</ns1:arrayOfArrays11><ns1:arrayOfArrays11>6</ns1:arrayOfArrays11><ns1:arrayOfArrays11>7</ns1:arrayOfArrays11><ns1:arrayOfArrays11>8</ns1:arrayOfArrays11></ns1:arrayOfArrays11></arrayOfArrays11></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays11\":[[1,2,3],[],[5,6,7,8]]}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><arrayOfArrays12 xmlns:ns2=\"http://test.com\"><arrayOfArrays12><ns2:arrayOfArrays12>1</ns2:arrayOfArrays12><ns2:arrayOfArrays12>2</ns2:arrayOfArrays12><ns2:arrayOfArrays12>3</ns2:arrayOfArrays12></arrayOfArrays12><arrayOfArrays12></arrayOfArrays12><arrayOfArrays12><ns2:arrayOfArrays12>5</ns2:arrayOfArrays12><ns2:arrayOfArrays12>6</ns2:arrayOfArrays12><ns2:arrayOfArrays12>7</ns2:arrayOfArrays12><ns2:arrayOfArrays12>8</ns2:arrayOfArrays12></arrayOfArrays12></arrayOfArrays12></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays12\":[[1,2,3],[],[5,6,7,8]]}")));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -1063,11 +1069,16 @@ public class JSONSchemaForXMLTest {
 		}
 
 		try {
-			//empty structure
-			o = jsonSchemaForXML.mapXMLToJSON("<root><shipping_address><city>Washington</city></shipping_address></root>");
-			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"shipping_address\":{\"city\":\"Washington\"}}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><shipping_address id=\"1\"><city>Washington</city></shipping_address><billing_address id=\"2\"></billing_address></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"shipping_address\":{\"id\":1,\"city\":\"Washington\"},\"billing_address\":{\"id\":2}}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><billing_address id=\"2\"><PHONES><PHONE>1</PHONE><PHONE>2</PHONE></PHONES></billing_address></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"billing_address\":{\"id\":2,\"phones\":[1,2]}}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><shipping_address id=\"1\"><city>Washington</city><ZIPCODE>1234</ZIPCODE></shipping_address><billing_address id=\"2\"></billing_address></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"shipping_address\":{\"id\":1,\"city\":\"Washington\",\"zipcode\":1234},\"billing_address\":{\"id\":2}}")));
+			o = jsonSchemaForXML.mapXMLToJSON("<root><shipping_address id=\"1\"><destination><name>John Dust</name><children><name>John Jr 1</name></children><children><name>John Jr 2</name></children></destination><city>Washington</city><ZIPCODE>1234</ZIPCODE></shipping_address><billing_address id=\"2\"></billing_address></root>");
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"shipping_address\":{\"id\":1,\"destination\":{\"name\":\"John Dust\", \"children\":[ {\"name\":\"John Jr 1\",\"children\":[]},{\"name\":\"John Jr 2\",\"children\":[]}]},\"city\":\"Washington\",\"zipcode\":1234},\"billing_address\":{\"id\":2}}")));
 		}
-		catch(MapException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			fail("Should not throw exception: " + e);
 		}

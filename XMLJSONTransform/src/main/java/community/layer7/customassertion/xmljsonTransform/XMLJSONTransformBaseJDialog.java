@@ -171,6 +171,7 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		testJPanel.add(scrollPane_2);
 		
 		testOutputJTextArea = new JTextArea();
+		testOutputJTextArea.setEditable(false);
 		testOutputJTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		scrollPane_2.setViewportView(testOutputJTextArea);
 		

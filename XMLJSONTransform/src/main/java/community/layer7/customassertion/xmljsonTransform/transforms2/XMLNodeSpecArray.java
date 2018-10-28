@@ -18,6 +18,10 @@ public class XMLNodeSpecArray extends XMLNodeSpec {
 	public XMLNodeSpec getItemsXMLNodeSpec() {
 		return itemsXMLNodeSpec;
 	}
+	
+	public void setItemsXMLNodeSpec(XMLNodeSpec itemsXMLNodeSpec) {
+		this.itemsXMLNodeSpec = itemsXMLNodeSpec;
+	}
 
 	public boolean isXMLWrapped() {
 		return isXMLWrapped;
@@ -28,6 +32,9 @@ public class XMLNodeSpecArray extends XMLNodeSpec {
 		if(isXMLWrapped)
 			return super.calculateTargetFullXMLName(objectName);
 		//then need to look at inner object
+		//if itemsXMLNodeSpec is null, that is using a ref, return objectName by default
+		if(itemsXMLNodeSpec == null)
+			return objectName;
 		return itemsXMLNodeSpec.calculateTargetFullXMLName(objectName);
 	}
 	
@@ -49,7 +56,7 @@ public class XMLNodeSpecArray extends XMLNodeSpec {
 		if(itemsType.equals("object")) {
 			itemsXMLNodeSpec = new XMLNodeSpecObject();
 			itemsXMLNodeSpec.loadJSONValue(items, valueDesriptionForException);
-			System.out.println("added items object");
+			//System.out.println("added items object");
 			return;
 		}
 		if(itemsType.equals("array")) {
@@ -59,14 +66,12 @@ public class XMLNodeSpecArray extends XMLNodeSpec {
 			//check that items array is wrapped
 			if(!itemsXMLNodeSpecArray.isXMLWrapped())
 				throw new JSONSchemaLoadException("Nested array should always be wrapped for array '" + valueDesriptionForException + "'");
-			System.out.println("added items array");
+			//System.out.println("added items array");
 			return;
 		}
 		int type = typeStringToTYPE(itemsType);
-		if(type == TYPE_UNDEFINED)
-			throw new JSONSchemaLoadException("Type is undefined for for object '" + valueDesriptionForException + "'");
 		itemsXMLNodeSpec = new XMLNodeSpecSimpleValue(type);
 		itemsXMLNodeSpec.loadJSONValue(items, valueDesriptionForException);
-		System.out.println("added items simple value");
+		//System.out.println("added items simple value");
 	}
 }

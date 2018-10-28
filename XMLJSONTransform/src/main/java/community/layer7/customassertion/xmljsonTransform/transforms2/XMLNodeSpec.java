@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 public abstract class XMLNodeSpec {
 	
-	public static final int TYPE_UNDEFINED = 0;
+	private static final int TYPE_UNDEFINED = 0;
 	public static final int TYPE_OBJECT = 1;
 	public static final int TYPE_ARRAY = 2;
 	public static final int TYPE_STRING = 3;
@@ -20,9 +20,9 @@ public abstract class XMLNodeSpec {
 	protected boolean isXMLAttribute = false;
 	protected boolean isXMLWrapped = false;
 	
-	protected static int typeStringToTYPE(String type) {
+	protected static int typeStringToTYPE(String type) throws JSONSchemaLoadException {
 		if(type == null)
-			return TYPE_UNDEFINED;
+			throw new JSONSchemaLoadException("JSON schema type is null / undefined");
 		if(type.equals("object"))
 			return TYPE_OBJECT;
 		if(type.equals("array"))
@@ -37,7 +37,11 @@ public abstract class XMLNodeSpec {
 			return TYPE_BOOLEAN;
 		if(type.equals("null"))
 			return TYPE_NULL;
-		return TYPE_UNDEFINED;
+		throw new JSONSchemaLoadException("Unknow JSON schema type '" + type + "'");
+	}
+	
+	public boolean isSimpleValue() {
+		return false;
 	}
 	
 	public XMLNodeSpec(int nodeType) {

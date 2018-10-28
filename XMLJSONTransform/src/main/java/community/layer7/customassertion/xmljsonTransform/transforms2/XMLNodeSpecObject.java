@@ -44,7 +44,7 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 				String innerObjectXMLElementName = innerObject.calculateTargetFullXMLName(propertyName);
 				checkKeyNotExistInHashMap(innerObjectXMLElementName, xmlElements, valueDesriptionForException + "." + propertyName);
 				xmlElements.put(innerObjectXMLElementName, propertyXMLNodeSpec);
-				System.out.println("added object XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
+				//System.out.println("added object XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
 				continue;
 			}
 			if(propertyType.equals("array")) {
@@ -54,14 +54,12 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 				String innerObjectXMLElementName = innerObject.calculateTargetFullXMLName(propertyName);
 				checkKeyNotExistInHashMap(innerObjectXMLElementName, xmlElements, valueDesriptionForException + "." + propertyName);
 				xmlElements.put(innerObjectXMLElementName, propertyXMLNodeSpec);
-				System.out.println("added array XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
+				//System.out.println("added array XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
 				if(!innerObject.isXMLWrapped())
 					nonWrappedJSONArrayNames.add(propertyName);
 				continue;
 			}
 			int type = typeStringToTYPE(propertyType);
-			if(type == TYPE_UNDEFINED)
-				throw new JSONSchemaLoadException("Type is undefined for property '" + propertyName + "' for object '" + valueDesriptionForException + "'");
 			XMLNodeSpecSimpleValue innerObject = new XMLNodeSpecSimpleValue(type);
 			innerObject.loadJSONValue(propertyObject, propertyName);
 			PropertyXMLNodeSpec propertyXMLNodeSpec = new PropertyXMLNodeSpec(propertyName, null, innerObject);
@@ -70,12 +68,12 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 			if(innerObject.isXMLAttribute()) {
 				checkKeyNotExistInHashMap(innerObjectXMLElementName, xmlAttributes, valueDesriptionForException + "." + propertyName);
 				xmlAttributes.put(innerObjectXMLElementName, propertyXMLNodeSpec);
-				System.out.println("added simple value XML attribute " + innerObjectXMLElementName + " to " + valueDesriptionForException);
+				//System.out.println("added simple value XML attribute " + innerObjectXMLElementName + " to " + valueDesriptionForException);
 			}
 			else {
 				checkKeyNotExistInHashMap(innerObjectXMLElementName, xmlElements, valueDesriptionForException + "." + propertyName);
 				xmlElements.put(innerObjectXMLElementName, propertyXMLNodeSpec);
-				System.out.println("added simple value XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
+				//System.out.println("added simple value XML element " + innerObjectXMLElementName + " to " + valueDesriptionForException);
 			}
 		}
 	}
@@ -90,6 +88,30 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 	
 	public PropertyXMLNodeSpec getAttributePropertyXMLNodeSpecByName(String attributeName) {
 		return xmlAttributes.get(attributeName);
+	}
+	
+	void addPropertyXMLNodeSpec(PropertyXMLNodeSpec propertyXMLNodeSpec) {
+		XMLNodeSpec xmlNodeSpec = propertyXMLNodeSpec.getXmlNodeSpec();
+		String innerObjectXMLElementName = xmlNodeSpec.calculateTargetFullXMLName(propertyXMLNodeSpec.getPropertyName());
+		if(xmlNodeSpec.isSimpleValue() && ((XMLNodeSpecSimpleValue)xmlNodeSpec).isXMLAttribute())
+			xmlAttributes.put(innerObjectXMLElementName, propertyXMLNodeSpec);
+		else {
+			xmlElements.put(innerObjectXMLElementName, propertyXMLNodeSpec);
+			if(xmlNodeSpec.getNodeType() == XMLNodeSpec.TYPE_ARRAY && !((XMLNodeSpecArray)xmlNodeSpec).isXMLWrapped())
+				nonWrappedJSONArrayNames.add(innerObjectXMLElementName);
+		}
+	}
+	
+	HashMap<String, PropertyXMLNodeSpec> getRefs() {
+		return refs;
+	}
+	
+	HashMap<String, PropertyXMLNodeSpec> getXMLElements() {
+		return xmlElements;
+	}
+	
+	HashMap<String, PropertyXMLNodeSpec> getXMLAttributes() {
+		return xmlAttributes;
 	}
 	
 	private static void checkKeyNotExistInHashMap(String key, HashMap<String, PropertyXMLNodeSpec> hashMap, String valueDesriptionForException) throws JSONSchemaLoadException {
