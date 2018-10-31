@@ -31,6 +31,8 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.json.JSONObject;
 
 import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaForXML;
@@ -38,6 +40,8 @@ import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaF
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 /**
  * @author Guy D.
@@ -50,14 +54,16 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 	private JTextField inputVariableNameJTextField;
 	private JComboBox transformationJComboBox;
 	private JCheckBox formatOutputJCheckBox;
-	private JTextPane schemaTextArea;
-	private JTextArea testInputJTextArea;
-	private JTextArea testOutputJTextArea;
+	private RSyntaxTextArea schemaTextArea;
+	private RSyntaxTextArea testInputJTextArea;
+	private RSyntaxTextArea testOutputJTextArea;
 	private JLabel testErrorJLabel;
 
 	public static void main(String[] args) {
 		try {
 			XMLJSONTransformBaseJDialog dialog = new XMLJSONTransformBaseJDialog();
+			//more lines for init
+			dialog.setTestJTextAreaStyles(TransformationHelper.XML_TO_JSON_TRANSFORMATION_ID);
 			//additional lines added for test
 			dialog.getTransformationJComboBox().setModel(new DefaultComboBoxModel(TransformationHelper.getSupportedTransformations()));			
 			//prepare then open dialog
@@ -66,6 +72,18 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	protected void setTestJTextAreaStyles(int direction) {
+		if(direction == TransformationHelper.JSON_TO_XML_TRANSFORMATION_ID) {
+			getTestInputJTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
+			getTestOutputJTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		}
+		else {
+			getTestInputJTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+			getTestOutputJTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
+			
 		}
 	}
 	
@@ -89,6 +107,11 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		panel_1.add(lblNewLabel);
 		
 		transformationJComboBox = new JComboBox();
+		transformationJComboBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				setTestJTextAreaStyles(getTransformationJComboBox().getSelectedIndex());
+			}
+		});
 		transformationJComboBox.setModel(new DefaultComboBoxModel(new String[] {"XML to JSON"}));
 		panel_1.add(transformationJComboBox);
 		
@@ -162,7 +185,8 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		scrollPane.setViewportBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Test Input :", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		testJPanel.add(scrollPane);
 		
-		testInputJTextArea = new JTextArea();
+		testInputJTextArea = new RSyntaxTextArea();
+		testInputJTextArea.setHighlightCurrentLine(false);
 		testInputJTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		scrollPane.setViewportView(testInputJTextArea);
 		
@@ -170,7 +194,8 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		scrollPane_2.setViewportBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Test Output:", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		testJPanel.add(scrollPane_2);
 		
-		testOutputJTextArea = new JTextArea();
+		testOutputJTextArea = new RSyntaxTextArea();
+		testOutputJTextArea.setHighlightCurrentLine(false);
 		testOutputJTextArea.setEditable(false);
 		testOutputJTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		scrollPane_2.setViewportView(testOutputJTextArea);
@@ -186,7 +211,9 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		gbc_schemaJPanel.gridy = 0;
 		panel_3.add(schemaJPanel, gbc_schemaJPanel);
 		
-		schemaTextArea = new JTextPane();
+		schemaTextArea = new RSyntaxTextArea();
+		schemaTextArea.setHighlightCurrentLine(false);
+		schemaTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
 		schemaTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		schemaJPanel.setViewportView(schemaTextArea);
 		
@@ -229,15 +256,15 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		return formatOutputJCheckBox;
 	}
 
-	protected JTextPane getSchemaTextArea() {
+	protected RSyntaxTextArea getSchemaTextArea() {
 		return schemaTextArea;
 	}
 	
-	protected JTextArea getTestInputJTextArea() {
+	protected RSyntaxTextArea getTestInputJTextArea() {
 		return testInputJTextArea;
 	}
 	
-	protected JTextArea getTestOutputJTextArea() {
+	protected RSyntaxTextArea getTestOutputJTextArea() {
 		return testOutputJTextArea;
 	}
 

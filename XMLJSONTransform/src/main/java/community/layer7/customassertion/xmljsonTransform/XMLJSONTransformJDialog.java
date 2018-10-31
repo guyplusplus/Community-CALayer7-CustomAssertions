@@ -31,16 +31,17 @@ public class XMLJSONTransformJDialog extends XMLJSONTransformBaseJDialog impleme
 		//register ESC key
 		registerESCKey();
 		//set input textfield
-		super.getInputVariableNameJTextField().setText(customAssertion.getInputVariable());
+		getInputVariableNameJTextField().setText(customAssertion.getInputVariable());
 		//set output textfield
-		super.getOutputVariableNameJTextField().setText(customAssertion.getOutputVariable());
+		getOutputVariableNameJTextField().setText(customAssertion.getOutputVariable());
 		//set combox
-		super.getTransformationJComboBox().setModel(new DefaultComboBoxModel(TransformationHelper.getSupportedTransformations()));
-		super.getTransformationJComboBox().setSelectedIndex(customAssertion.getTransformationTypeID());
+		getTransformationJComboBox().setModel(new DefaultComboBoxModel(TransformationHelper.getSupportedTransformations()));
+		getTransformationJComboBox().setSelectedIndex(customAssertion.getTransformationTypeID());
+		setTestJTextAreaStyles(customAssertion.getTransformationTypeID());
 		//set formatted output checkbox
-		super.getFormatOutputJCheckBox().setSelected(customAssertion.isOutputFormatted());
+		getFormatOutputJCheckBox().setSelected(customAssertion.isOutputFormatted());
 		//set schema
-		super.getSchemaTextArea().setText(customAssertion.getJsonSchema());
+		getSchemaTextArea().setText(customAssertion.getJsonSchema());
 	}
 
 	@Override
