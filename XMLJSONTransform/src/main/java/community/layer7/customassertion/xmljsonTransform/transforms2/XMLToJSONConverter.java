@@ -121,7 +121,6 @@ public class XMLToJSONConverter {
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
 					String fqElementName = calculateFQElementName(reader);
-					//String startElementXPath = xpath + "/" + fqElementName;
 					SimplePath startElementXPath = xpath.pushElement(fqElementName); //=xpath
 					//check fqElementName is correct
 					XMLNodeSpec itemsXMLNodeSpec = xmlNodeSpecArray.getItemsXMLNodeSpec();
@@ -131,7 +130,6 @@ public class XMLToJSONConverter {
 					if(itemsXMLNodeSpec.getXmlPrefix() != null && itemsXMLNodeSpec.getXmlNamespace() != null)
 						if(!itemsXMLNodeSpec.getXmlNamespace().equals(reader.getNamespaceURI()))
 							throw new MapException("Invalid namespace", startElementXPath.getFullXMLPath());
-					//String startElementXPath += "[" + (array.length() + 1) + "]";
 					startElementXPath.pushIndex(array.length() + 1); //=xpath
 					Object childElement = parseJSONValue(reader, itemsXMLNodeSpec, startElementXPath, fqElementName);
 					array.put(childElement);
@@ -214,7 +212,6 @@ public class XMLToJSONConverter {
 				String fqAttributeName = reader.getAttributeLocalName(attributeIndex);
 				if(prefixName != null && prefixName.length() > 0)
 					fqAttributeName = prefixName + ":" + fqAttributeName;
-				//String attributeXPath = xpath + "/@" + fqAttributeName;
 				SimplePath attributeXPath = xpath.pushXMLAttribute(fqAttributeName); //=xpath
 				//now attributeName is prefix:localName
 				PropertyXMLNodeSpec attributePropertyXMLNodeSpec = xmlNodeSpecObject.getAttributePropertyXMLNodeSpecByName(fqAttributeName);
@@ -246,8 +243,7 @@ public class XMLToJSONConverter {
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					String fqElementName = calculateFQElementName(reader);
-					//String startElementXPath = xpath + "/" + fqElementName;
-					SimplePath startElementXPath = xpath.pushElement(fqElementName);
+					SimplePath startElementXPath = xpath.pushElement(fqElementName); //=xpath
 					//System.out.println(xpath + " START_ELEMENT: " + fqElementName);
 					PropertyXMLNodeSpec childElementPropertyXMLNodeSpec = xmlNodeSpecObject.getChildElementPropertyXMLNodeSpecByName(fqElementName);
 					if(childElementPropertyXMLNodeSpec == null)
