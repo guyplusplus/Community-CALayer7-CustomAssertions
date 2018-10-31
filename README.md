@@ -53,10 +53,10 @@ _Schema caching_ is controlled with the 3 following cluster properties. Every 5 
 
 Release History
 
-Version|Date|Details
---------------------
-0.8.0|28-Oct-18|Support for XML to JSON
-0.8.1|TBD|Syntax highlighting. optimize code for xpath (used when raising exception)
+|Version|Date|Details|
+|---|---|---|
+|0.8.0|28-Oct-18|Support for XML to JSON|
+|0.8.1|TBD|Syntax highlighting. optimize code for xpath (used when raising exception)|
 
 TODO (by order of priority):
 * JSON to XML
