@@ -78,4 +78,10 @@ public class SimplePath {
 		}
 		return sb.toString();
 	}
+	
+	public SimplePath clone() {
+		SimplePath sp = new SimplePath();
+		sp.path.addAll(path);
+		return sp;
+	}
 }
