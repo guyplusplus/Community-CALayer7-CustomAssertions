@@ -41,9 +41,11 @@ public class XMLToJSONConverter {
 		//ensure root name is correct
 		String fqElementName = calculateFQElementName(reader);
 		String expectedFQELementName = rootContainerXMLNodeSpec.calculateTargetFullXMLName(JSONSchemaForXML.DEFAULT_XML_ROOT_ELEMENT_NAME);
+		SimplePath xpath = new SimplePath();
+		xpath.pushElement(fqElementName);
 		if(!fqElementName.equals(expectedFQELementName))
-			throw new MapException("XML root node name is invalid", "/" + fqElementName);
-		output = parseJSONObject(reader, rootContainerXMLNodeSpec, "/" + fqElementName);		
+			throw new MapException("XML root node name is invalid", xpath.getFullXMLPath());
+		output = parseJSONObject(reader, rootContainerXMLNodeSpec, xpath);		
 	}
 	
 	public JSONObject getOutput() {
@@ -51,7 +53,6 @@ public class XMLToJSONConverter {
 	}
 	
 	static private void moveReaderToFirstStartElement(XMLStreamReader reader) throws MapException {
-		String xpath = "";
 		try {
 			while(true) {
 				if(!reader.hasNext())
@@ -62,11 +63,11 @@ public class XMLToJSONConverter {
 						//System.out.println(xpath + " CHARACTERS white spaces, ignore");
 						continue;
 					}
-					throw new MapException("Characters at this location are not allowed", xpath);
+					throw new MapException("Characters at this location are not allowed", new SimplePath().getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.END_ELEMENT) {
 					//System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
-					throw new MapException("End element not allowed", xpath);
+					throw new MapException("End element not allowed", new SimplePath().getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
@@ -79,15 +80,15 @@ public class XMLToJSONConverter {
 					continue;
 				}
 				else {
-					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", xpath);
+					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", new SimplePath().getFullXMLPath());
 				}
 			}
 		} catch (XMLStreamException e) {
-			throw new MapException("XML parsing error at " + e.getLocation().toString(), xpath);
+			throw new MapException("XML parsing error at " + e.getLocation().toString(), new SimplePath().getFullXMLPath());
 		}		
 	}
 	
-	static private Object parseJSONValue(XMLStreamReader reader, XMLNodeSpec xmlNodeSpec, String xpath, String fqElementName) throws MapException {
+	static private Object parseJSONValue(XMLStreamReader reader, XMLNodeSpec xmlNodeSpec, SimplePath xpath, String fqElementName) throws MapException {
 		if(xmlNodeSpec.getNodeType() == XMLNodeSpec.TYPE_OBJECT)
 			return parseJSONObject(reader, (XMLNodeSpecObject)xmlNodeSpec, xpath);
 		if(xmlNodeSpec.getNodeType() == XMLNodeSpec.TYPE_ARRAY) {
@@ -99,7 +100,7 @@ public class XMLToJSONConverter {
 		return parseJSONSimpleValue(reader, (XMLNodeSpecSimpleValue)xmlNodeSpec, xpath);
 	}
 	
-	static private JSONArray parseJSONArrayWrapped(XMLStreamReader reader, XMLNodeSpecArray xmlNodeSpecArray, String xpath, String wrapperFQElementName) throws MapException {
+	static private JSONArray parseJSONArrayWrapped(XMLStreamReader reader, XMLNodeSpecArray xmlNodeSpecArray, SimplePath xpath, String wrapperFQElementName) throws MapException {
 		JSONArray array = new JSONArray();
 		try {
 			while(true) {
@@ -111,7 +112,7 @@ public class XMLToJSONConverter {
 						//System.out.println(xpath + " CHARACTERS white spaces, ignore");
 						continue;
 					}
-					throw new MapException("Characters at this location are not allowed", xpath);
+					throw new MapException("Characters at this location are not allowed", xpath.getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.END_ELEMENT) {
 					//System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
@@ -120,39 +121,42 @@ public class XMLToJSONConverter {
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
 					String fqElementName = calculateFQElementName(reader);
-					String startElementXPath = xpath + "/" + fqElementName;
+					//String startElementXPath = xpath + "/" + fqElementName;
+					SimplePath startElementXPath = xpath.pushElement(fqElementName); //=xpath
 					//check fqElementName is correct
 					XMLNodeSpec itemsXMLNodeSpec = xmlNodeSpecArray.getItemsXMLNodeSpec();
 					String expectedFQElementName = itemsXMLNodeSpec.calculateTargetFullXMLName(wrapperFQElementName);
 					if(!fqElementName.equals(expectedFQElementName))
-						throw new MapException("Wrapped element name is not matching specifications", startElementXPath);
+						throw new MapException("Wrapped element name is not matching specifications", startElementXPath.getFullXMLPath());
 					if(itemsXMLNodeSpec.getXmlPrefix() != null && itemsXMLNodeSpec.getXmlNamespace() != null)
 						if(!itemsXMLNodeSpec.getXmlNamespace().equals(reader.getNamespaceURI()))
-							throw new MapException("Invalid namespace", startElementXPath);
-					startElementXPath += "[" + (array.length() + 1) + "]";
+							throw new MapException("Invalid namespace", startElementXPath.getFullXMLPath());
+					//String startElementXPath += "[" + (array.length() + 1) + "]";
+					startElementXPath.pushIndex(array.length() + 1); //=xpath
 					Object childElement = parseJSONValue(reader, itemsXMLNodeSpec, startElementXPath, fqElementName);
 					array.put(childElement);
+					xpath.pop().pop();
 				}
 				else if(eventType == XMLStreamConstants.END_DOCUMENT) {
-					throw new MapException("Too early end of XML document", xpath);
+					throw new MapException("Too early end of XML document", xpath.getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.COMMENT) {
 					continue;
 				}
 				else {
-					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", xpath);
+					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", xpath.getFullXMLPath());
 				}
 			}
 			return array;
 		} catch (JSONException e) {
 			e.printStackTrace();
-			throw new MapException("Problem to create the target JSON object", xpath);
+			throw new MapException("Problem to create the target JSON object", xpath.getFullXMLPath());
 		} catch (XMLStreamException e) {
-			throw new MapException("XML parsing error at " + e.getLocation().toString(), xpath);
+			throw new MapException("XML parsing error at " + e.getLocation().toString(), xpath.getFullXMLPath());
 		}		
 	}
 	
-	static private Object parseJSONSimpleValue(XMLStreamReader reader, XMLNodeSpecSimpleValue xmlNodeSpecSimpleValue, String xpath) throws MapException {
+	static private Object parseJSONSimpleValue(XMLStreamReader reader, XMLNodeSpecSimpleValue xmlNodeSpecSimpleValue, SimplePath xpath) throws MapException {
 		String characters = ""; //Purposely not use StringBuilder as concatenation for this variable happens rarely
 		try {
 			while(true) {
@@ -172,28 +176,30 @@ public class XMLToJSONConverter {
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
-					throw new MapException("New XML element not allowed for a simple property (string, boolean, integer, number)", xpath + "/" + reader.getLocalName());
+					xpath.pushElement(reader.getLocalName());
+					throw new MapException("New XML element not allowed for a simple property (string, boolean, integer, number)", xpath.getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.END_DOCUMENT) {
-					throw new MapException("Too early end of XML document", xpath);
+					throw new MapException("Too early end of XML document", xpath.getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.COMMENT) {
 					continue;
 				}
 				else {
-					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", xpath);
+					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", xpath.getFullXMLPath());
 				}
 			}
-			return createObjectFromSimpleProperty(characters, xmlNodeSpecSimpleValue.getNodeType(), xpath);
+			Object objectFromSimpleProperty = createObjectFromSimpleProperty(characters, xmlNodeSpecSimpleValue.getNodeType(), xpath);
+			return objectFromSimpleProperty;
 		} catch (JSONException e) {
 			e.printStackTrace();
-			throw new MapException("Problem to create the target JSON object", xpath);
+			throw new MapException("Problem to create the target JSON object", xpath.getFullXMLPath());
 		} catch (XMLStreamException e) {
-			throw new MapException("XML parsing error at " + e.getLocation().toString(), xpath);
+			throw new MapException("XML parsing error at " + e.getLocation().toString(), xpath.getFullXMLPath());
 		}
 	}
 
-	static private JSONObject parseJSONObject(XMLStreamReader reader, XMLNodeSpecObject xmlNodeSpecObject, String xpath) throws MapException {
+	static private JSONObject parseJSONObject(XMLStreamReader reader, XMLNodeSpecObject xmlNodeSpecObject, SimplePath xpath) throws MapException {
 		JSONObject o = new JSONObject();
 		//add non wrapped arrays. When a wrapped array comes in, then the json array is added
 		for(String jsonArrayName:xmlNodeSpecObject.getNonWrappedJSONArrayNames()) {
@@ -208,18 +214,20 @@ public class XMLToJSONConverter {
 				String fqAttributeName = reader.getAttributeLocalName(attributeIndex);
 				if(prefixName != null && prefixName.length() > 0)
 					fqAttributeName = prefixName + ":" + fqAttributeName;
-				String attributeXPath = xpath + "/@" + fqAttributeName;
+				//String attributeXPath = xpath + "/@" + fqAttributeName;
+				SimplePath attributeXPath = xpath.pushXMLAttribute(fqAttributeName); //=xpath
 				//now attributeName is prefix:localName
 				PropertyXMLNodeSpec attributePropertyXMLNodeSpec = xmlNodeSpecObject.getAttributePropertyXMLNodeSpecByName(fqAttributeName);
 				if(attributePropertyXMLNodeSpec == null)
-					throw new MapException("Attribute not found in JSON schema", attributeXPath);
+					throw new MapException("Attribute not found in JSON schema", attributeXPath.getFullXMLPath());
 				if(!(attributePropertyXMLNodeSpec.getXmlNodeSpec().isSimpleValue()))
-					throw new MapException("Attribute should be a simple type (boolean, integer, number, string, null)", attributeXPath);
+					throw new MapException("Attribute should be a simple type (boolean, integer, number, string, null)", attributeXPath.getFullXMLPath());
 				if(prefixName != null && attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace() != null)
 					if(!attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace().equals(reader.getAttributeNamespace(attributeIndex)))
-						throw new MapException("Invalid namespace", attributeXPath);
-				Object attributeValue = createObjectFromSimpleProperty(reader.getAttributeValue(attributeIndex), attributePropertyXMLNodeSpec.getXmlNodeSpec().getNodeType(), xpath + "/@" + fqAttributeName); 
+						throw new MapException("Invalid namespace", attributeXPath.getFullXMLPath());
+				Object attributeValue = createObjectFromSimpleProperty(reader.getAttributeValue(attributeIndex), attributePropertyXMLNodeSpec.getXmlNodeSpec().getNodeType(), xpath); 
 				addKeyValueToJSONObject(attributePropertyXMLNodeSpec.getPropertyName(), attributeValue, o, attributeXPath, false);
+				attributeXPath.pop();
 			}
 			while(true) {
 				if(!reader.hasNext())
@@ -230,7 +238,7 @@ public class XMLToJSONConverter {
 						//System.out.println(xpath + " CHARACTERS white spaces, ignore");
 						continue;
 					}
-					throw new MapException("Characters at this location are not allowed", xpath);
+					throw new MapException("Characters at this location are not allowed", xpath.getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.END_ELEMENT) {
 					//System.out.println(xpath + " END_ELEMENT: " + reader.getLocalName());
@@ -238,41 +246,46 @@ public class XMLToJSONConverter {
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					String fqElementName = calculateFQElementName(reader);
-					String startElementXPath = xpath + "/" + fqElementName;
+					//String startElementXPath = xpath + "/" + fqElementName;
+					SimplePath startElementXPath = xpath.pushElement(fqElementName);
 					//System.out.println(xpath + " START_ELEMENT: " + fqElementName);
 					PropertyXMLNodeSpec childElementPropertyXMLNodeSpec = xmlNodeSpecObject.getChildElementPropertyXMLNodeSpecByName(fqElementName);
 					if(childElementPropertyXMLNodeSpec == null)
-						throw new MapException("Element not found in JSON schema", startElementXPath);
+						throw new MapException("Element not found in JSON schema", startElementXPath.getFullXMLPath());
 					//adjust startElementXPath in case of a non wrapped array
 					boolean isAppendKeyToArray = (childElementPropertyXMLNodeSpec.getXmlNodeSpec().getNodeType() == XMLNodeSpec.TYPE_ARRAY ?
 							!((XMLNodeSpecArray)childElementPropertyXMLNodeSpec.getXmlNodeSpec()).isXMLWrapped() : false);
 					if(isAppendKeyToArray)
-						startElementXPath += "[" + (o.getJSONArray(childElementPropertyXMLNodeSpec.getPropertyName()).length() + 1 )+ "]";
+						//startElementXPath += "[" + (o.getJSONArray(childElementPropertyXMLNodeSpec.getPropertyName()).length() + 1 )+ "]";
+						startElementXPath.pushIndex(o.getJSONArray(childElementPropertyXMLNodeSpec.getPropertyName()).length() + 1);
 					//check namespace is correct
 					if(childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlPrefix() != null && childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace() != null)
 						if(!childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace().equals(reader.getNamespaceURI()))
-							throw new MapException("Invalid namespace", startElementXPath);
+							throw new MapException("Invalid namespace", startElementXPath.getFullXMLPath());
 					//add child element
 					Object childElement = parseJSONValue(reader, childElementPropertyXMLNodeSpec.getXmlNodeSpec(), startElementXPath, fqElementName);
 					addKeyValueToJSONObject(childElementPropertyXMLNodeSpec.getPropertyName(), childElement, o, startElementXPath,
 							isAppendKeyToArray);
+					if(isAppendKeyToArray)
+						startElementXPath.pop();
+					startElementXPath.pop();
 				}
 				else if(eventType == XMLStreamConstants.END_DOCUMENT) {
-					throw new MapException("Too early end of XML document", xpath);
+					throw new MapException("Too early end of XML document", xpath.getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.COMMENT) {
 					continue;
 				}
 				else {
-					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", xpath);
+					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", xpath.getFullXMLPath());
 				}
 			}
 			return o;
 		} catch (JSONException e) {
 			e.printStackTrace();
-			throw new MapException("Problem to create the target JSON object", xpath);
+			throw new MapException("Problem to create the target JSON object", xpath.getFullXMLPath());
 		} catch (XMLStreamException e) {
-			throw new MapException("XML parsing error at " + e.getLocation().toString(), xpath);
+			throw new MapException("XML parsing error at " + e.getLocation().toString(), xpath.getFullXMLPath());
 		}
 	}
 	
@@ -285,19 +298,19 @@ public class XMLToJSONConverter {
 		return fqElementName;
 	}
 
-	static private void addKeyValueToJSONObject(String key, Object value, JSONObject o, String path, boolean isAppendKeyToArray) throws MapException {
+	static private void addKeyValueToJSONObject(String key, Object value, JSONObject o, SimplePath xpath, boolean isAppendKeyToArray) throws MapException {
 		if(isAppendKeyToArray) {
 			o.append(key, value);
 			return;
 		}
 		//check no duplicate key first
 		if(o.opt(key) != null)
-			throw new MapException("Duplicated element", path);
+			throw new MapException("Duplicated element", xpath.getFullXMLPath());
 		//then add
 		o.put(key, value);
 	}
 
-	static private Object createObjectFromSimpleProperty(String characters, int nodeType, String xpath) throws MapException {
+	static private Object createObjectFromSimpleProperty(String characters, int nodeType, SimplePath xpath) throws MapException {
 		String charactersTrimmed = characters.trim();
 		if(nodeType == XMLNodeSpec.TYPE_STRING) {
 			return charactersTrimmed;
@@ -305,7 +318,7 @@ public class XMLToJSONConverter {
 		else if(charactersTrimmed.equalsIgnoreCase("null"))
 			return JSONObject.NULL;
 		else if(nodeType == XMLNodeSpec.TYPE_NULL) {
-			throw new MapException("Failure to convert text to a null", xpath);
+			throw new MapException("Failure to convert text to a null", xpath.getFullXMLPath());
 		}
 		else if(nodeType == XMLNodeSpec.TYPE_BOOLEAN) {
 			if(charactersTrimmed.equalsIgnoreCase("true"))
@@ -313,7 +326,7 @@ public class XMLToJSONConverter {
 			else if(charactersTrimmed.equalsIgnoreCase("false"))
 				return Boolean.FALSE;
 			else
-				throw new MapException("Failure to convert text to a boolean", xpath);
+				throw new MapException("Failure to convert text to a boolean", xpath.getFullXMLPath());
 		}
 		else if(nodeType == XMLNodeSpec.TYPE_INTEGER) {
 			try {
@@ -324,17 +337,17 @@ public class XMLToJSONConverter {
 				else
 					return Integer.parseInt(charactersTrimmed);
 			} catch (NumberFormatException e) {
-				throw new MapException("Failure to convert text to an integer", xpath);
+				throw new MapException("Failure to convert text to an integer", xpath.getFullXMLPath());
 			}
 		}
 		else if(nodeType == XMLNodeSpec.TYPE_NUMBER) {
 			try {
 				return new BigDecimal(charactersTrimmed);
 			} catch (NumberFormatException e) {
-				throw new MapException("Failure to convert text to a number", xpath);
+				throw new MapException("Failure to convert text to a number", xpath.getFullXMLPath());
 			}
 		}
 		else
-			throw new MapException("Unknown XMLNodeSpec type " + nodeType, xpath);
+			throw new MapException("Unknown XMLNodeSpec type " + nodeType, xpath.getFullXMLPath());
 	}
 }
