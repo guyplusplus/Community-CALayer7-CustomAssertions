@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="dist" name="XMLJSONTransformCustomAssertion">
+    
+    <!--
+    Define properties
+    -->
+    <property name="package.jar" value="XMLJSONTransformCustomAssertion"/>
+    <property name="resource.jar.excludes" value="**/rsyntaxtextarea-2.0.6.jar"/>
+
+    <!-- 
+    Import the common module build script
+    -->
+    <import file="../build-common.xml"/>
+
+    <path id="xmljsontransformation.classpath">
+        <path refid="l7tech.api.classpath"/>
+        <pathelement path="${src.main.resources.dir}/lib/json-20180813.jar"/>
+        <pathelement path="${src.main.resources.dir}/lib/rsyntaxtextarea-2.0.6.jar"/>
+    </path>
+
+    <path id="javac.classpath">
+        <path refid="xmljsontransformation.classpath"/>
+    </path>
+    
+    <copy todir="${build.test.classes.dir}" filtering="yes">
+        <fileset dir="${src.test.java.dir}">
+            <include name="**/*.json"/>
+        </fileset>
+    </copy>
+
+</project>

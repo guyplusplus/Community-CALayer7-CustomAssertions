@@ -3,6 +3,6 @@
 build-common.xml
 build.cmd
 build.sh
-build.xml
+/build.xml
 lib/**
 tools/**
