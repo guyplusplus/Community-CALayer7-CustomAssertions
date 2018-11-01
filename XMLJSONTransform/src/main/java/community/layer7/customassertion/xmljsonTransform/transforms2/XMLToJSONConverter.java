@@ -121,17 +121,17 @@ public class XMLToJSONConverter {
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
 					String fqElementName = calculateFQElementName(reader);
-					SimplePath startElementXPath = xpath.pushElement(fqElementName); //=xpath
+					xpath.pushElement(fqElementName);
 					//check fqElementName is correct
 					XMLNodeSpec itemsXMLNodeSpec = xmlNodeSpecArray.getItemsXMLNodeSpec();
 					String expectedFQElementName = itemsXMLNodeSpec.calculateTargetFullXMLName(wrapperFQElementName);
 					if(!fqElementName.equals(expectedFQElementName))
-						throw new MapException("Wrapped element name is not matching specifications", startElementXPath.getFullXMLPath());
+						throw new MapException("Wrapped element name is not matching specifications", xpath.getFullXMLPath());
 					if(itemsXMLNodeSpec.getXmlPrefix() != null && itemsXMLNodeSpec.getXmlNamespace() != null)
 						if(!itemsXMLNodeSpec.getXmlNamespace().equals(reader.getNamespaceURI()))
-							throw new MapException("Invalid namespace", startElementXPath.getFullXMLPath());
-					startElementXPath.pushIndex(array.length() + 1); //=xpath
-					Object childElement = parseJSONValue(reader, itemsXMLNodeSpec, startElementXPath, fqElementName);
+							throw new MapException("Invalid namespace", xpath.getFullXMLPath());
+					xpath.pushIndex(array.length() + 1);
+					Object childElement = parseJSONValue(reader, itemsXMLNodeSpec, xpath, fqElementName);
 					array.put(childElement);
 					xpath.pop().pop();
 				}
@@ -212,19 +212,19 @@ public class XMLToJSONConverter {
 				String fqAttributeName = reader.getAttributeLocalName(attributeIndex);
 				if(prefixName != null && prefixName.length() > 0)
 					fqAttributeName = prefixName + ":" + fqAttributeName;
-				SimplePath attributeXPath = xpath.pushXMLAttribute(fqAttributeName); //=xpath
+				xpath.pushXMLAttribute(fqAttributeName);
 				//now attributeName is prefix:localName
 				PropertyXMLNodeSpec attributePropertyXMLNodeSpec = xmlNodeSpecObject.getAttributePropertyXMLNodeSpecByName(fqAttributeName);
 				if(attributePropertyXMLNodeSpec == null)
-					throw new MapException("Attribute not found in JSON schema", attributeXPath.getFullXMLPath());
+					throw new MapException("Attribute not found in JSON schema", xpath.getFullXMLPath());
 				if(!(attributePropertyXMLNodeSpec.getXmlNodeSpec().isSimpleValue()))
-					throw new MapException("Attribute should be a simple type (boolean, integer, number, string, null)", attributeXPath.getFullXMLPath());
+					throw new MapException("Attribute should be a simple type (boolean, integer, number, string, null)", xpath.getFullXMLPath());
 				if(prefixName != null && attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace() != null)
 					if(!attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace().equals(reader.getAttributeNamespace(attributeIndex)))
-						throw new MapException("Invalid namespace", attributeXPath.getFullXMLPath());
+						throw new MapException("Invalid namespace", xpath.getFullXMLPath());
 				Object attributeValue = createObjectFromSimpleProperty(reader.getAttributeValue(attributeIndex), attributePropertyXMLNodeSpec.getXmlNodeSpec().getNodeType(), xpath); 
-				addKeyValueToJSONObject(attributePropertyXMLNodeSpec.getPropertyName(), attributeValue, o, attributeXPath, false);
-				attributeXPath.pop();
+				addKeyValueToJSONObject(attributePropertyXMLNodeSpec.getPropertyName(), attributeValue, o, xpath, false);
+				xpath.pop();
 			}
 			while(true) {
 				if(!reader.hasNext())
@@ -243,28 +243,28 @@ public class XMLToJSONConverter {
 				}
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					String fqElementName = calculateFQElementName(reader);
-					SimplePath startElementXPath = xpath.pushElement(fqElementName); //=xpath
+					xpath.pushElement(fqElementName);
 					//System.out.println(xpath + " START_ELEMENT: " + fqElementName);
 					PropertyXMLNodeSpec childElementPropertyXMLNodeSpec = xmlNodeSpecObject.getChildElementPropertyXMLNodeSpecByName(fqElementName);
 					if(childElementPropertyXMLNodeSpec == null)
-						throw new MapException("Element not found in JSON schema", startElementXPath.getFullXMLPath());
+						throw new MapException("Element not found in JSON schema", xpath.getFullXMLPath());
 					//adjust startElementXPath in case of a non wrapped array
 					boolean isAppendKeyToArray = (childElementPropertyXMLNodeSpec.getXmlNodeSpec().getNodeType() == XMLNodeSpec.TYPE_ARRAY ?
 							!((XMLNodeSpecArray)childElementPropertyXMLNodeSpec.getXmlNodeSpec()).isXMLWrapped() : false);
 					if(isAppendKeyToArray)
 						//startElementXPath += "[" + (o.getJSONArray(childElementPropertyXMLNodeSpec.getPropertyName()).length() + 1 )+ "]";
-						startElementXPath.pushIndex(o.getJSONArray(childElementPropertyXMLNodeSpec.getPropertyName()).length() + 1);
+						xpath.pushIndex(o.getJSONArray(childElementPropertyXMLNodeSpec.getPropertyName()).length() + 1);
 					//check namespace is correct
 					if(childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlPrefix() != null && childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace() != null)
 						if(!childElementPropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace().equals(reader.getNamespaceURI()))
-							throw new MapException("Invalid namespace", startElementXPath.getFullXMLPath());
+							throw new MapException("Invalid namespace", xpath.getFullXMLPath());
 					//add child element
-					Object childElement = parseJSONValue(reader, childElementPropertyXMLNodeSpec.getXmlNodeSpec(), startElementXPath, fqElementName);
-					addKeyValueToJSONObject(childElementPropertyXMLNodeSpec.getPropertyName(), childElement, o, startElementXPath,
+					Object childElement = parseJSONValue(reader, childElementPropertyXMLNodeSpec.getXmlNodeSpec(), xpath, fqElementName);
+					addKeyValueToJSONObject(childElementPropertyXMLNodeSpec.getPropertyName(), childElement, o, xpath,
 							isAppendKeyToArray);
 					if(isAppendKeyToArray)
-						startElementXPath.pop();
-					startElementXPath.pop();
+						xpath.pop();
+					xpath.pop();
 				}
 				else if(eventType == XMLStreamConstants.END_DOCUMENT) {
 					throw new MapException("Too early end of XML document", xpath.getFullXMLPath());
