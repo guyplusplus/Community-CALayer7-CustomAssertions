@@ -56,13 +56,12 @@ Release History
 |Version|Date|Details|
 |---|---|---|
 |0.8.0|28-Oct-18|Support for XML to JSON|
-|0.8.1|TBD|Syntax highlighting. optimize code for xpath (used when raising exception)|
+|0.8.1|TBD|Syntax highlighting<br>optimize code for xpath (used when raising exception)<br>Support for const and enum|
 
 TODO (by order of priority):
 * JSON to XML
 * additionalProperties support:
   * true or false
-* support for const and enum without type
 * ability to control for XML to JSON if an empty XML non wrapped array (hence no XML element) creates an empty JSON array
 * ability to control for XML to JSON space trim for string content (text node) and XML attributes (quote delimited)
 * additionalProperties support:
