@@ -56,7 +56,7 @@ Release History
 |Version|Date|Details|
 |---|---|---|
 |0.8.0|28-Oct-18|Support for XML to JSON|
-|0.8.1|TBD|Syntax highlighting<br>optimize code for xpath (used when raising exception)<br>Support for const and enum|
+|0.8.1|TBD|Syntax highlighting<br>optimize code for xpath (used when raising exception)|
 
 TODO (by order of priority):
 * JSON to XML
@@ -64,11 +64,11 @@ TODO (by order of priority):
   * true or false
 * ability to control for XML to JSON if an empty XML non wrapped array (hence no XML element) creates an empty JSON array
 * ability to control for XML to JSON space trim for string content (text node) and XML attributes (quote delimited)
+* Support for const without type
 * additionalProperties support:
   * with schema
 * Support schema oneOf, anyOf, allOf, not
 * support for $ref
   * a definitions in schema is just a proxy to another schema in definitions
-  * support $id
   * support relative URI
   * external $ref
