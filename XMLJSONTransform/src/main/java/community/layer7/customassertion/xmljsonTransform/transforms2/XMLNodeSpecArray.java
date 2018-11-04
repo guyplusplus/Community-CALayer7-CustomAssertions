@@ -70,7 +70,7 @@ public class XMLNodeSpecArray extends XMLNodeSpec {
 			return;
 		}
 		int type = typeStringToTYPE(itemsType);
-		itemsXMLNodeSpec = new XMLNodeSpecSimpleValue(type);
+		itemsXMLNodeSpec = new XMLNodeSpecPrimitiveType(type);
 		itemsXMLNodeSpec.loadJSONValue(items, valueDesriptionForException);
 		//System.out.println("added items simple value");
 	}

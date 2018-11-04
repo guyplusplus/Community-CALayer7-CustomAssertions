@@ -1,10 +1,21 @@
 package community.layer7.customassertion.xmljsonTransform.transforms2;
 
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import org.w3c.dom.Document;
 
 /**
  * @author Guy D.
@@ -12,8 +23,12 @@ import org.json.JSONObject;
  */
 public class JSONSchemaForXML {
 	
-	public static final String DEFAULT_XML_ROOT_ELEMENT_NAME = "root";
+	static final String DEFAULT_XML_ROOT_ELEMENT_NAME = "root";
+	private static final String XML_INDENT_SPACES = "4";
+	private static final int JSON_INDENT_SPACES = 2;
 	
+	private static final Logger logger = Logger.getLogger(JSONSchemaForXML.class.getName());
+
 	private long createdTimeInMs;
 	private PropertyXMLNodeSpec rootPropertyXMLNodeSpecObject;
 	
@@ -126,9 +141,9 @@ public class JSONSchemaForXML {
 				rootXMLNodeSpec = rootXMLNodeSpecArray;
 			}
 			else {
-				XMLNodeSpecSimpleValue rootXMLNodeSpecSimpleValue = new XMLNodeSpecSimpleValue(rootNodeType);
-				rootXMLNodeSpecSimpleValue.loadJSONValue(schema, "$");
-				rootXMLNodeSpec = rootXMLNodeSpecSimpleValue;
+				XMLNodeSpecPrimitiveType rootXMLNodeSpecPrimitiveType = new XMLNodeSpecPrimitiveType(rootNodeType);
+				rootXMLNodeSpecPrimitiveType.loadJSONValue(schema, "$");
+				rootXMLNodeSpec = rootXMLNodeSpecPrimitiveType;
 			}
 			return new PropertyXMLNodeSpec(DEFAULT_XML_ROOT_ELEMENT_NAME, null, rootXMLNodeSpec);
 		}
@@ -141,6 +156,36 @@ public class JSONSchemaForXML {
 		XMLToJSONConverter converter = new XMLToJSONConverter(inputXML, (XMLNodeSpecObject)rootPropertyXMLNodeSpecObject.getXmlNodeSpec());
 		converter.process();
 		return converter.getOutput();
+	}
+	
+	public Document mapJSONToXML(String inputJSON) throws MapException {
+		JSONToXMLConverter converter = new JSONToXMLConverter(inputJSON, (XMLNodeSpecObject)rootPropertyXMLNodeSpecObject.getXmlNodeSpec());
+		converter.process();
+		return converter.getOutput();
+	}
+	
+	public static String jsonToString(JSONObject o, boolean formatOutput) {
+		return o.toString(formatOutput ? JSON_INDENT_SPACES : 0);
+	}
+	
+	public static String xmlToString(Document inputDocument, boolean formatOutput) throws MapException {
+		try {
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, formatOutput ? "yes" : "no");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", XML_INDENT_SPACES);
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, formatOutput ? "no" : "yes");
+			DOMSource domSource = new DOMSource(inputDocument);
+			StringWriter sw = new StringWriter();
+			StreamResult sr = new StreamResult(sw);
+			transformer.transform(domSource, sr);
+			return sw.toString();
+		} catch (Exception e) {
+			//should never happen
+			logger.log(Level.WARNING, "Failed to convert XML object to a string", e);
+			throw new MapException("Failed to convert XML object to a string");
+		}
 	}
 	
 	public long getCreatedTimeInMs() {

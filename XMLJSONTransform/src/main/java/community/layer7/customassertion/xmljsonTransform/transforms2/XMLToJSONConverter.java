@@ -97,7 +97,7 @@ public class XMLToJSONConverter {
 				return parseJSONValue(reader, xmlNodeSpecArray.getItemsXMLNodeSpec(), xpath, fqElementName);
 			return parseJSONArrayWrapped(reader, xmlNodeSpecArray, xpath, fqElementName);
 		}
-		return parseJSONSimpleValue(reader, (XMLNodeSpecSimpleValue)xmlNodeSpec, xpath);
+		return parseJSONPrimitiveType(reader, (XMLNodeSpecPrimitiveType)xmlNodeSpec, xpath);
 	}
 	
 	static private JSONArray parseJSONArrayWrapped(XMLStreamReader reader, XMLNodeSpecArray xmlNodeSpecArray, SimplePath xpath, String wrapperFQElementName) throws MapException {
@@ -154,7 +154,7 @@ public class XMLToJSONConverter {
 		}		
 	}
 	
-	static private Object parseJSONSimpleValue(XMLStreamReader reader, XMLNodeSpecSimpleValue xmlNodeSpecSimpleValue, SimplePath xpath) throws MapException {
+	static private Object parseJSONPrimitiveType(XMLStreamReader reader, XMLNodeSpecPrimitiveType xmlNodeSpecPrimitiveType, SimplePath xpath) throws MapException {
 		String characters = ""; //Purposely not use StringBuilder as concatenation for this variable happens rarely
 		try {
 			while(true) {
@@ -175,7 +175,7 @@ public class XMLToJSONConverter {
 				else if(eventType == XMLStreamConstants.START_ELEMENT) {
 					//System.out.println(xpath + " START_ELEMENT: " + reader.getLocalName());
 					xpath.pushElement(reader.getLocalName());
-					throw new MapException("New XML element not allowed for a simple property (string, boolean, integer, number)", xpath.getFullXMLPath());
+					throw new MapException("New XML element not allowed for a primitive type property (string, boolean, integer, number, null)", xpath.getFullXMLPath());
 				}
 				else if(eventType == XMLStreamConstants.END_DOCUMENT) {
 					throw new MapException("Too early end of XML document", xpath.getFullXMLPath());
@@ -187,8 +187,7 @@ public class XMLToJSONConverter {
 					throw new MapException("Unknown StAX event type '" + eventType + "' while parsing XML", xpath.getFullXMLPath());
 				}
 			}
-			Object objectFromSimpleProperty = createObjectFromSimpleProperty(characters, xmlNodeSpecSimpleValue.getNodeType(), xpath);
-			return objectFromSimpleProperty;
+			return createObjectFromPrimitiveTypeProperty(characters, xmlNodeSpecPrimitiveType.getNodeType(), xpath);
 		} catch (JSONException e) {
 			e.printStackTrace();
 			throw new MapException("Problem to create the target JSON object", xpath.getFullXMLPath());
@@ -217,12 +216,12 @@ public class XMLToJSONConverter {
 				PropertyXMLNodeSpec attributePropertyXMLNodeSpec = xmlNodeSpecObject.getAttributePropertyXMLNodeSpecByName(fqAttributeName);
 				if(attributePropertyXMLNodeSpec == null)
 					throw new MapException("Attribute not found in JSON schema", xpath.getFullXMLPath());
-				if(!(attributePropertyXMLNodeSpec.getXmlNodeSpec().isSimpleValue()))
-					throw new MapException("Attribute should be a simple type (boolean, integer, number, string, null)", xpath.getFullXMLPath());
+				if(!(attributePropertyXMLNodeSpec.getXmlNodeSpec().isPrimitiveType()))
+					throw new MapException("Attribute should be a primitive type (string, boolean, integer, number, null)", xpath.getFullXMLPath());
 				if(prefixName != null && attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace() != null)
 					if(!attributePropertyXMLNodeSpec.getXmlNodeSpec().getXmlNamespace().equals(reader.getAttributeNamespace(attributeIndex)))
 						throw new MapException("Invalid namespace", xpath.getFullXMLPath());
-				Object attributeValue = createObjectFromSimpleProperty(reader.getAttributeValue(attributeIndex), attributePropertyXMLNodeSpec.getXmlNodeSpec().getNodeType(), xpath); 
+				Object attributeValue = createObjectFromPrimitiveTypeProperty(reader.getAttributeValue(attributeIndex), attributePropertyXMLNodeSpec.getXmlNodeSpec().getNodeType(), xpath); 
 				addKeyValueToJSONObject(attributePropertyXMLNodeSpec.getPropertyName(), attributeValue, o, xpath, false);
 				xpath.pop();
 			}
@@ -306,7 +305,7 @@ public class XMLToJSONConverter {
 		o.put(key, value);
 	}
 
-	static private Object createObjectFromSimpleProperty(String characters, int nodeType, SimplePath xpath) throws MapException {
+	static private Object createObjectFromPrimitiveTypeProperty(String characters, int nodeType, SimplePath xpath) throws MapException {
 		String charactersTrimmed = characters.trim();
 		if(nodeType == XMLNodeSpec.TYPE_STRING) {
 			return charactersTrimmed;

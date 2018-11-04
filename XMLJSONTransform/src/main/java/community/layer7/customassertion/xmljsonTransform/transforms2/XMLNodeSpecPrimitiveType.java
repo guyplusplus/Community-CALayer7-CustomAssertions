@@ -1,8 +1,8 @@
 package community.layer7.customassertion.xmljsonTransform.transforms2;
 
-public class XMLNodeSpecSimpleValue extends XMLNodeSpec {
+public class XMLNodeSpecPrimitiveType extends XMLNodeSpec {
 	
-	public XMLNodeSpecSimpleValue(int nodeType) {
+	public XMLNodeSpecPrimitiveType(int nodeType) {
 		super(nodeType);
 	}
 
@@ -10,7 +10,7 @@ public class XMLNodeSpecSimpleValue extends XMLNodeSpec {
 		return isXMLAttribute;
 	}
 	@Override
-	public boolean isSimpleValue() {
+	public boolean isPrimitiveType() {
 		return true;
 	}
 	

@@ -5,13 +5,13 @@ import org.json.JSONObject;
 public abstract class XMLNodeSpec {
 	
 	private static final int TYPE_UNDEFINED = 0;
-	public static final int TYPE_OBJECT = 1;
-	public static final int TYPE_ARRAY = 2;
-	public static final int TYPE_STRING = 3;
-	public static final int TYPE_NUMBER = 4;
-	public static final int TYPE_INTEGER = 5;
-	public static final int TYPE_BOOLEAN = 6;
-	public static final int TYPE_NULL = 7;
+	static final int TYPE_OBJECT = 1;
+	static final int TYPE_ARRAY = 2;
+	static final int TYPE_STRING = 3;
+	static final int TYPE_NUMBER = 4;
+	static final int TYPE_INTEGER = 5;
+	static final int TYPE_BOOLEAN = 6;
+	static final int TYPE_NULL = 7;
 	
 	protected int nodeType = TYPE_UNDEFINED;
 	protected String xmlName = null;
@@ -40,7 +40,7 @@ public abstract class XMLNodeSpec {
 		throw new JSONSchemaLoadException("Unknow JSON schema type '" + type + "'");
 	}
 	
-	public boolean isSimpleValue() {
+	public boolean isPrimitiveType() {
 		return false;
 	}
 	

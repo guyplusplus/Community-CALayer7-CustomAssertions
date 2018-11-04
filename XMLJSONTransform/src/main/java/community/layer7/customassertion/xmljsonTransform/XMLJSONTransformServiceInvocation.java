@@ -61,7 +61,7 @@ public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
         	String jsonSchemaString = customPolicyContext.expandVariable(xmljsonTransformCustomAssertion.getJsonSchema());
         	JSONSchemaForXML jsonSchemaForXML = SchemaCache.getSingleton().getJSONSchemaForXML(jsonSchemaString);
         	JSONObject o = jsonSchemaForXML.mapXMLToJSON(input);
-            String output = o.toString(xmljsonTransformCustomAssertion.isOutputFormatted() ? 2 : 0);
+            String output = JSONSchemaForXML.jsonToString(o, xmljsonTransformCustomAssertion.isOutputFormatted()); 
             customPolicyContext.setVariable(xmljsonTransformCustomAssertion.getOutputVariable(), output);
             customPolicyContext.setVariable(XMLJSONTransformCustomAssertion.ERROR_MESSAGE_CONTEXT_VARIABLE, "");
         }
