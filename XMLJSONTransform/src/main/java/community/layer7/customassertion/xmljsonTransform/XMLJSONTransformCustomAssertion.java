@@ -60,6 +60,8 @@ public class XMLJSONTransformCustomAssertion implements CustomAssertion, UsesVar
 	}
 
 	public void setTransformationTypeID(int transformationTypeID) {
+		if(transformationTypeID < 0 || transformationTypeID > 1)
+			throw new IllegalArgumentException("transformationTypeID shall be 0 or 1 only");
 		this.transformationTypeID = transformationTypeID;
 	}
 

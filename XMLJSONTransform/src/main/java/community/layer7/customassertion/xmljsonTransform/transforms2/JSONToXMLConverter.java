@@ -70,41 +70,65 @@ public class JSONToXMLConverter {
 			objectElement.appendChild(newArrayElement);
 			targetElement = newArrayElement;
 		}
+		int arrayIndex = 0;
 		while (parser.hasNext()) {
 			Event e = parser.next();
 			if(e == Event.START_ARRAY) {
+				jpath.pushIndex(arrayIndex++);
 				if(!(xmlNodeSpecArray.getItemsXMLNodeSpec() instanceof XMLNodeSpecArray))
-					throw new MapException("Value is expected to be a JSON array", jpath.getFullJSONPath());
-				parseArray(parser, objectElement, (XMLNodeSpecArray)xmlNodeSpecArray.getItemsXMLNodeSpec(), arrayFQElementName, jpath);
+					throw new MapException("Value should not be a JSON array", jpath.getFullJSONPath());
+				parseArray(parser, targetElement, (XMLNodeSpecArray)xmlNodeSpecArray.getItemsXMLNodeSpec(), arrayFQElementName, jpath);
+				jpath.pop();
 			}
 			else if(e == Event.END_ARRAY)
 				return;
 			else if(e == Event.START_OBJECT) {
+				jpath.pushIndex(arrayIndex++);
 				if(!(xmlNodeSpecArray.getItemsXMLNodeSpec() instanceof XMLNodeSpecObject))
-					throw new MapException("Value is expected to be a JSON object", jpath.getFullJSONPath());
+					throw new MapException("Value should not be a JSON object", jpath.getFullJSONPath());
 				Element childObjectElement = createObjectElement(targetElement, xmlNodeSpecArray.getItemsXMLNodeSpec(), arrayFQElementName, jpath); 
 				targetElement.appendChild(childObjectElement);
 				parseObject(parser, childObjectElement, (XMLNodeSpecObject)xmlNodeSpecArray.getItemsXMLNodeSpec(), arrayFQElementName, jpath);
+				jpath.pop();
 			}
 			else if(e == Event.VALUE_STRING || e == Event.VALUE_NUMBER ||
 					e == Event.VALUE_NULL || e == Event.VALUE_TRUE || e == Event.VALUE_FALSE) {
+				jpath.pushIndex(arrayIndex++);
 				if(!xmlNodeSpecArray.getItemsXMLNodeSpec().isPrimitiveType())
 					throw new MapException("Value is expected to be a container (array or object)", jpath.getFullJSONPath());
 				String memberValue = null;
-				if(e == Event.VALUE_STRING || e == Event.VALUE_NUMBER)
+				//TODO validate childXmlNodeSpec is right type
+				if(e == Event.VALUE_STRING) {
+					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_STRING)
+						throw new MapException("Value should not be a string", jpath.getFullJSONPath());
 					memberValue = parser.getString();
-				if(e == Event.VALUE_NULL)
+				}
+				else if(e == Event.VALUE_NUMBER) {
+					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_NUMBER &&
+							xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_INTEGER)
+						throw new MapException("Value should not be a number or an integer", jpath.getFullJSONPath());
+					memberValue = parser.getString();
+				}
+				else if(e == Event.VALUE_NULL) {
+//					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_NULL)
+//						throw new MapException("Value should not be a null", jpath.getFullJSONPath());
 					memberValue = "null";
-				if(e == Event.VALUE_TRUE)
+				}
+				else if(e == Event.VALUE_TRUE) {
+					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_BOOLEAN)
+						throw new MapException("Value should not be a boolean", jpath.getFullJSONPath());
 					memberValue = "true";
-				if(e == Event.VALUE_FALSE)
+				}
+				else if(e == Event.VALUE_FALSE) {
+					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_BOOLEAN)
+						throw new MapException("Value should not be a boolean", jpath.getFullJSONPath());
 					memberValue = "false";
+				}
 				addKeyValueLeafElement(targetElement, (XMLNodeSpecPrimitiveType)xmlNodeSpecArray.getItemsXMLNodeSpec(), arrayFQElementName, memberValue, jpath);
+				jpath.pop();
 			}
 		}
-
 	}
-
 	
 	private static void parseObject(JsonParser parser, Element objectElement, XMLNodeSpecObject xmlNodeSpecObject, String currentPropertyName, SimplePath jpath)
 			throws MapException {
@@ -114,20 +138,21 @@ public class JSONToXMLConverter {
 			Event e = parser.next();
 			if(e == Event.START_ARRAY) {
 				if(!(childXmlNodeSpec instanceof XMLNodeSpecArray))
-					throw new MapException("Value is expected to be a JSON array", jpath.getFullJSONPath());
+					throw new MapException("Value should not be a JSON array", jpath.getFullJSONPath());
 				parseArray(parser, objectElement, (XMLNodeSpecArray)childXmlNodeSpec, memberKey, jpath);
 //				Element newArrayElement = createIfWrappedArrayElementAndAddToArrayElement(entryModifiers, objectElement, currentPath + "." + memberKey + "[*]", memberKey);
 //				parseArray(parser, newArrayElement, currentPath + "." + memberKey + "[*]", memberKey, entryModifiers);
+				jpath.pop();
 			}
 			else if(e == Event.START_OBJECT) {
 				if(!(childXmlNodeSpec instanceof XMLNodeSpecObject))
-					throw new MapException("Value is expected to be a JSON object", jpath.getFullJSONPath());
+					throw new MapException("Value should not be a JSON object", jpath.getFullJSONPath());
 				Element childObjectElement = createObjectElement(objectElement, childXmlNodeSpec, memberKey, jpath); 
 				objectElement.appendChild(childObjectElement);
 				parseObject(parser, childObjectElement, (XMLNodeSpecObject)childXmlNodeSpec, memberKey, jpath);
+				jpath.pop();
 			}
 			else if(e == Event.END_OBJECT) {
-				//jpath.pop(); //TODO fix
 				return;
 			}
 			else if(e == Event.KEY_NAME) {
@@ -141,15 +166,17 @@ public class JSONToXMLConverter {
 				if(!childXmlNodeSpec.isPrimitiveType())
 					throw new MapException("Value is expected to be a container (array or object)", jpath.getFullJSONPath());
 				String memberValue = null;
+				//TODO validate childXmlNodeSpec is right type
 				if(e == Event.VALUE_STRING || e == Event.VALUE_NUMBER)
 					memberValue = parser.getString();
 				else if(e == Event.VALUE_NULL)
-					memberValue = "null";
+					memberValue = "";
 				else if(e == Event.VALUE_TRUE)
 					memberValue = "true";
 				else if(e == Event.VALUE_FALSE)
 					memberValue = "false";
 				addKeyValueLeafElement(objectElement, (XMLNodeSpecPrimitiveType)childXmlNodeSpec, memberKey, memberValue, jpath);
+				jpath.pop();
 			}
 		}		
 	}

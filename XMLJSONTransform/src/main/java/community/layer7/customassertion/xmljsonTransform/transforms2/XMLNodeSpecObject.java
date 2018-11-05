@@ -108,7 +108,7 @@ public class XMLNodeSpecObject extends XMLNodeSpec {
 			if(xmlNodeSpec.getNodeType() == XMLNodeSpec.TYPE_ARRAY && !((XMLNodeSpecArray)xmlNodeSpec).isXMLWrapped())
 				nonWrappedJSONArrayNames.add(innerObjectXMLElementName);
 		}
-		jsonProperties.put(innerObjectXMLElementName, xmlNodeSpec);
+		jsonProperties.put(propertyXMLNodeSpec.getPropertyName(), xmlNodeSpec);
 	}
 	
 	HashMap<String, PropertyXMLNodeSpec> getRefs() {

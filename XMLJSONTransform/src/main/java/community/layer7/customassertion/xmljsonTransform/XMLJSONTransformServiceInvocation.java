@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import com.l7tech.policy.assertion.ext.CustomAssertionStatus;
 import com.l7tech.policy.assertion.ext.ServiceInvocation;
@@ -26,7 +27,6 @@ public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
     
     private XMLJSONTransformCustomAssertion xmljsonTransformCustomAssertion;
     private String input;
-    private int transformationTypeID;
 
     @Override
     public CustomAssertionStatus checkRequest(CustomPolicyContext customPolicyContext) {
@@ -56,12 +56,20 @@ public class XMLJSONTransformServiceInvocation extends ServiceInvocation {
         	logger.log(Level.WARNING, "InputVariable is not defined");
         	return CustomAssertionStatus.FAILED;
         }
-        transformationTypeID = xmljsonTransformCustomAssertion.getTransformationTypeID();
         try {
         	String jsonSchemaString = customPolicyContext.expandVariable(xmljsonTransformCustomAssertion.getJsonSchema());
         	JSONSchemaForXML jsonSchemaForXML = SchemaCache.getSingleton().getJSONSchemaForXML(jsonSchemaString);
-        	JSONObject o = jsonSchemaForXML.mapXMLToJSON(input);
-            String output = JSONSchemaForXML.jsonToString(o, xmljsonTransformCustomAssertion.isOutputFormatted()); 
+        	String output = null;
+        	if(xmljsonTransformCustomAssertion.getTransformationTypeID() == TransformationHelper.XML_TO_JSON_TRANSFORMATION_ID) {
+	        	JSONObject jsonObject = jsonSchemaForXML.mapXMLToJSON(input);
+	            output = JSONSchemaForXML.jsonToString(jsonObject, xmljsonTransformCustomAssertion.isOutputFormatted());
+        	}
+        	else if(xmljsonTransformCustomAssertion.getTransformationTypeID() == TransformationHelper.JSON_TO_XML_TRANSFORMATION_ID) {
+        		Document document = jsonSchemaForXML.mapJSONToXML(input);
+        		output = JSONSchemaForXML.xmlToString(document, xmljsonTransformCustomAssertion.isOutputFormatted());
+        	}
+        	else
+        		throw new Exception("Internal error: invalid transformationTypeID=" + xmljsonTransformCustomAssertion.getTransformationTypeID());
             customPolicyContext.setVariable(xmljsonTransformCustomAssertion.getOutputVariable(), output);
             customPolicyContext.setVariable(XMLJSONTransformCustomAssertion.ERROR_MESSAGE_CONTEXT_VARIABLE, "");
         }
