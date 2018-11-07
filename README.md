@@ -56,7 +56,8 @@ Release History
 |Version|Date|Details|
 |---|---|---|
 |0.8.0|28-Oct-18|Support for XML to JSON|
-|0.8.1|TBD|Syntax highlighting<br>optimize code for xpath (used when raising exception)|
+|0.8.1|4-Nov-18|Syntax highlighting<br>optimize code for xpath (used when raising exception)|
+|0.9.0|8-Nov-18|JSON to XML implemented|
 
 TODO (by order of priority):
 * JSON to XML

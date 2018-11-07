@@ -23,7 +23,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -34,6 +33,7 @@ import javax.swing.border.TitledBorder;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import community.layer7.customassertion.xmljsonTransform.transforms2.JSONSchemaForXML;
 
@@ -83,12 +83,11 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 		else {
 			getTestInputJTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 			getTestOutputJTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
-			
 		}
 	}
 	
 	public XMLJSONTransformBaseJDialog() {
-		setTitle("XML / JSON Transform Properties - v0.8.1");
+		setTitle("XML / JSON Transform Properties - v0.9.0");
 		setModal(true);
 		setBounds(100, 100, 872, 500);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -290,10 +289,18 @@ public class XMLJSONTransformBaseJDialog extends JDialog {
 			String jsonSchemaString = getSchemaTextArea().getText();
 			JSONSchemaForXML jsonSchemaForXML = new JSONSchemaForXML(jsonSchemaString);
 			//apply the right transformation
-			String intputXML = getTestInputJTextArea().getText();
-			JSONObject o = jsonSchemaForXML.mapXMLToJSON(intputXML);
+			String input = getTestInputJTextArea().getText();
+			String output = null;
+			if(getTransformationJComboBox().getSelectedIndex() == TransformationHelper.XML_TO_JSON_TRANSFORMATION_ID) {
+				JSONObject o = jsonSchemaForXML.mapXMLToJSON(input);
+				output = JSONSchemaForXML.jsonToString(o, getFormatOutputJCheckBox().isSelected());
+			}
+			else if(getTransformationJComboBox().getSelectedIndex() == TransformationHelper.JSON_TO_XML_TRANSFORMATION_ID) {
+				Document document = jsonSchemaForXML.mapJSONToXML(input);
+				output = JSONSchemaForXML.xmlToString(document, getFormatOutputJCheckBox().isSelected());
+			}
 			//set output area
-			getTestOutputJTextArea().setText(o.toString(getFormatOutputJCheckBox().isSelected() ? 2 : 0));
+			getTestOutputJTextArea().setText(output);
 		}
 		catch(Exception e) {
 			String msg = e.toString();
