@@ -1,7 +1,6 @@
 package community.layer7.customassertion.xmljsonTransform.transforms2;
 
 import java.io.StringReader;
-import java.util.logging.Logger;
 
 import javax.json.Json;
 import javax.json.stream.JsonParser;
@@ -18,8 +17,6 @@ public class JSONToXMLConverter {
 
 	private static final String XMLNS_COLUMN = "xmlns:";
 	private static final String XMLNS_ATTRIBUTE_NS_URI = "http://www.w3.org/2000/xmlns/";
-
-	private static final Logger logger = Logger.getLogger(JSONToXMLConverter.class.getName());
 
 	private String inputJSON;
 	private XMLNodeSpecObject rootContainerXMLNodeSpec;
@@ -94,36 +91,7 @@ public class JSONToXMLConverter {
 			else if(e == Event.VALUE_STRING || e == Event.VALUE_NUMBER ||
 					e == Event.VALUE_NULL || e == Event.VALUE_TRUE || e == Event.VALUE_FALSE) {
 				jpath.pushIndex(arrayIndex++);
-				if(!xmlNodeSpecArray.getItemsXMLNodeSpec().isPrimitiveType())
-					throw new MapException("Value is expected to be a container (array or object)", jpath.getFullJSONPath());
-				String memberValue = null;
-				//TODO validate childXmlNodeSpec is right type
-				if(e == Event.VALUE_STRING) {
-					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_STRING)
-						throw new MapException("Value should not be a string", jpath.getFullJSONPath());
-					memberValue = parser.getString();
-				}
-				else if(e == Event.VALUE_NUMBER) {
-					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_NUMBER &&
-							xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_INTEGER)
-						throw new MapException("Value should not be a number or an integer", jpath.getFullJSONPath());
-					memberValue = parser.getString();
-				}
-				else if(e == Event.VALUE_NULL) {
-//					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_NULL)
-//						throw new MapException("Value should not be a null", jpath.getFullJSONPath());
-					memberValue = "null";
-				}
-				else if(e == Event.VALUE_TRUE) {
-					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_BOOLEAN)
-						throw new MapException("Value should not be a boolean", jpath.getFullJSONPath());
-					memberValue = "true";
-				}
-				else if(e == Event.VALUE_FALSE) {
-					if(xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType() != XMLNodeSpec.TYPE_BOOLEAN)
-						throw new MapException("Value should not be a boolean", jpath.getFullJSONPath());
-					memberValue = "false";
-				}
+				String memberValue = getAndValidateValue(parser, e, xmlNodeSpecArray.getItemsXMLNodeSpec().getNodeType(), jpath);
 				addKeyValueLeafElement(targetElement, (XMLNodeSpecPrimitiveType)xmlNodeSpecArray.getItemsXMLNodeSpec(), arrayFQElementName, memberValue, jpath);
 				jpath.pop();
 			}
@@ -140,8 +108,6 @@ public class JSONToXMLConverter {
 				if(!(childXmlNodeSpec instanceof XMLNodeSpecArray))
 					throw new MapException("Value should not be a JSON array", jpath.getFullJSONPath());
 				parseArray(parser, objectElement, (XMLNodeSpecArray)childXmlNodeSpec, memberKey, jpath);
-//				Element newArrayElement = createIfWrappedArrayElementAndAddToArrayElement(entryModifiers, objectElement, currentPath + "." + memberKey + "[*]", memberKey);
-//				parseArray(parser, newArrayElement, currentPath + "." + memberKey + "[*]", memberKey, entryModifiers);
 				jpath.pop();
 			}
 			else if(e == Event.START_OBJECT) {
@@ -163,22 +129,41 @@ public class JSONToXMLConverter {
 					throw new MapException("Property is not defined in schema", jpath.getFullJSONPath());
 			}
 			else if(e == Event.VALUE_STRING || e == Event.VALUE_TRUE || e == Event.VALUE_FALSE || e == Event.VALUE_NUMBER || e == Event.VALUE_NULL) {
-				if(!childXmlNodeSpec.isPrimitiveType())
-					throw new MapException("Value is expected to be a container (array or object)", jpath.getFullJSONPath());
-				String memberValue = null;
-				//TODO validate childXmlNodeSpec is right type
-				if(e == Event.VALUE_STRING || e == Event.VALUE_NUMBER)
-					memberValue = parser.getString();
-				else if(e == Event.VALUE_NULL)
-					memberValue = "";
-				else if(e == Event.VALUE_TRUE)
-					memberValue = "true";
-				else if(e == Event.VALUE_FALSE)
-					memberValue = "false";
+				String memberValue = getAndValidateValue(parser, e, childXmlNodeSpec.getNodeType(), jpath);
 				addKeyValueLeafElement(objectElement, (XMLNodeSpecPrimitiveType)childXmlNodeSpec, memberKey, memberValue, jpath);
 				jpath.pop();
 			}
 		}		
+	}
+	
+	private static String getAndValidateValue(JsonParser parser, Event currentEvent, int nodeType, SimplePath jpath) throws MapException {
+		if(currentEvent == Event.VALUE_STRING) {
+			if(nodeType != XMLNodeSpec.TYPE_STRING)
+				throw new MapException("Value should not be a string", jpath.getFullJSONPath());
+			return parser.getString();
+		}
+		else if(currentEvent == Event.VALUE_NUMBER) {
+			if(nodeType != XMLNodeSpec.TYPE_NUMBER && nodeType != XMLNodeSpec.TYPE_INTEGER)
+				throw new MapException("Value should not be a number or an integer", jpath.getFullJSONPath());
+			return parser.getString();
+		}
+		else if(currentEvent == Event.VALUE_NULL) {
+			if(nodeType != XMLNodeSpec.TYPE_NULL)
+				throw new MapException("Value should not be a null", jpath.getFullJSONPath());
+			return "null";
+		}
+		else if(currentEvent == Event.VALUE_TRUE) {
+			if(nodeType != XMLNodeSpec.TYPE_BOOLEAN)
+				throw new MapException("Value should not be a boolean", jpath.getFullJSONPath());
+			return "true";
+		}
+		else if(currentEvent == Event.VALUE_FALSE) {
+			if(nodeType != XMLNodeSpec.TYPE_BOOLEAN)
+				throw new MapException("Value should not be a boolean", jpath.getFullJSONPath());
+			return "false";
+		}
+		//never happens
+		throw new MapException("Internal error", jpath.getFullJSONPath());
 	}
 
 	private static void addKeyValueLeafElement(Element objectElement, XMLNodeSpecPrimitiveType propertyXMLNodeSpec, String objectKey, String objectValue, SimplePath jpath)

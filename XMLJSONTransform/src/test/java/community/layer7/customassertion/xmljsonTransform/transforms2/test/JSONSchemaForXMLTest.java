@@ -318,12 +318,6 @@ public class JSONSchemaForXMLTest {
 			//simple aNumber property with spaces and new line
 			o = jsonSchemaForXML.mapXMLToJSON("<root><aNumber>   \n  \t  123.456 \t  \n \t  </aNumber></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":123.456}")));
-			//simple aNumber property null
-			xml = "<root><aNumber>   \n  \t  null \t  \n \t  </aNumber></root>";
-			o = jsonSchemaForXML.mapXMLToJSON(xml);
-			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":null}")));
-			d = jsonSchemaForXML.mapJSONToXML(o.toString());
-			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aNumber/></root>"));			
 			//simple string + number property
 			xml = "<root><aString>aaa</aString><aNumber>123.456</aNumber></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
@@ -331,8 +325,11 @@ public class JSONSchemaForXMLTest {
 			d = jsonSchemaForXML.mapJSONToXML(o.toString());
 			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aNumber>123.456</aNumber><aString>aaa</aString></root>"));			
 			//simple string + number property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><aString>aaa</aString>  \t  \n  \t   <aNumber>-123.456000</aNumber></root>");
+			xml = "<root><aString>aaa</aString>  \t  \n  \t   <aNumber>-123.456000</aNumber></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":-123.456,\"aString\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aNumber>-123.456</aNumber><aString>aaa</aString></root>"));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -362,20 +359,35 @@ public class JSONSchemaForXMLTest {
 		}
 		try {
 			//simple anInteger property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><anInteger>123</anInteger></root>");
+			xml = "<root><anInteger>123</anInteger></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"anInteger\":123}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//simple anInteger property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><anInteger>0</anInteger></root>");
+			xml = "<root><anInteger>0</anInteger></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"anInteger\":0}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//simple anInteger property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><anInteger>-66</anInteger></root>");
+			xml = "<root><anInteger>-66</anInteger></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"anInteger\":-66}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//simple anInteger property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><anInteger>123456789012345678901234567890</anInteger></root>");
+			xml = "<root><anInteger>123456789012345678901234567890</anInteger></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"anInteger\":123456789012345678901234567890}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//simple anInteger property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><anInteger>-123456789012345678901234567890</anInteger></root>");
+			xml = "<root><anInteger>-123456789012345678901234567890</anInteger></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"anInteger\":-123456789012345678901234567890}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -460,20 +472,26 @@ public class JSONSchemaForXMLTest {
 		}
 		try {
 			//simple aNumber property
-			xml = "<root><aString>aaa</aString><anObject><str1>one</str1><str2>two</str2></anObject><aNumber>123.456</aNumber></root>";
+			xml = "<root><aString>aaa</aString><anObject><str1>one</str1><str2>two</str2></anObject><aNumber>123.456</aNumber><aNull>null</aNull></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
-			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":123.456,\"aString\":\"aaa\",\"anObject\":{\"str1\":\"one\",\"str2\":\"two\"}}")));
+			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":123.456,\"aString\":\"aaa\",\"anObject\":{\"str1\":\"one\",\"str2\":\"two\"},\"aNull\":null}")));
 			d = jsonSchemaForXML.mapJSONToXML(o.toString());
-			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aNumber>123.456</aNumber><aString>aaa</aString><anObject><str1>one</str1><str2>two</str2></anObject></root>"));
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aNumber>123.456</aNumber><aString>aaa</aString><aNull>null</aNull><anObject><str1>one</str1><str2>two</str2></anObject></root>"));
 			xml = "<root><aString>aaa</aString><anObject2><str1>one</str1><str2>two</str2><nb1>777</nb1></anObject2><anObject><str1>one</str1><str2>two</str2></anObject><aNumber>123.456</aNumber></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":123.456,\"aString\":\"aaa\",\"anObject\":{\"str1\":\"one\",\"str2\":\"two\"},\"anObject2\":{\"str1\":\"one\",\"str2\":\"two\",\"nb1\":777}}")));
 			d = jsonSchemaForXML.mapJSONToXML(o.toString());
 			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aNumber>123.456</aNumber><aString>aaa</aString><anObject><str1>one</str1><str2>two</str2></anObject><anObject2><str1>one</str1><str2>two</str2><nb1>777</nb1></anObject2></root>"));
-			o = jsonSchemaForXML.mapXMLToJSON("<root><anObject2><str1>one</str1><str2>two</str2></anObject2><anObject><str1>one</str1><str2>two</str2></anObject></root>");
+			xml = "<root><anObject2><str1>one</str1><str2>two</str2></anObject2><anObject><str1>one</str1><str2>two</str2></anObject></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"anObject\":{\"str1\":\"one\",\"str2\":\"two\"},\"anObject2\":{\"str1\":\"one\",\"str2\":\"two\"}}")));
-			o = jsonSchemaForXML.mapXMLToJSON("<root><aString>aaa</aString><anObject></anObject><aNumber>123.456</aNumber></root>");
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><anObject><str1>one</str1><str2>two</str2></anObject><anObject2><str1>one</str1><str2>two</str2></anObject2></root>"));
+			xml = "<root><aString>aaa</aString><anObject></anObject><aNumber>123.456</aNumber></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":123.456,\"aString\":\"aaa\",\"anObject\":{}}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aNumber>123.456</aNumber><aString>aaa</aString><anObject/></root>"));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -498,7 +516,7 @@ public class JSONSchemaForXMLTest {
 		}
 		catch(Exception e) {
 			//ok
-			assertTrue(e.toString().indexOf("Value is expected to be a container (array or object)") != -1);
+			assertTrue(e.toString().indexOf("Value should not be a number or an integer") != -1);
 			assertTrue(e.toString().indexOf("path: $.anObject") != -1);
 		}
 
@@ -519,6 +537,9 @@ public class JSONSchemaForXMLTest {
 	public void testJSONSchema_PropertyXML() {
 		String schema = null;
 		JSONObject o = null;
+		Document d = null;
+		String xml = null;
+
 		String resourceName = JSON_TEST_FILES_FOLDER + "schema_propertyXML.json";
 		try {
 			schema = convertInputStreamToString(this.getClass().getClassLoader().getResourceAsStream(resourceName), Charset.defaultCharset());
@@ -538,42 +559,75 @@ public class JSONSchemaForXMLTest {
 			
 		try {
 			//simple string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><str1>aaa</str1></root>");
+			xml = "<root><str1>aaa</str1></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str1\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//empty string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><str1></str1></root>");
+			xml = "<root><str1></str1></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str1\":\"\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><str1/></root>"));
 
 			//simple string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><xmlstr2>aaa</xmlstr2></root>");
+			xml = "<root><xmlstr2>aaa</xmlstr2></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str2\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//empty string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><xmlstr2></xmlstr2></root>");
+			xml = "<root><xmlstr2></xmlstr2></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str2\":\"\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><xmlstr2/></root>"));
 
 			//simple string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root xmlns:pref3=\"http://example.com/schema\"><pref3:str3>aaa</pref3:str3></root>");
+			xml = "<root xmlns:pref3=\"http://example.com/schema\"><pref3:str3>aaa</pref3:str3></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str3\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><pref3:str3>aaa</pref3:str3></root>"));
 			//empty string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root xmlns:pref3=\"http://example.com/schema\"><pref3:str3></pref3:str3></root>");
+			xml = "<root xmlns:pref3=\"http://example.com/schema\"><pref3:str3></pref3:str3></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str3\":\"\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><pref3:str3/></root>"));
 
 			//simple string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><pref4:str4 xmlns:pref4=\"http://example.com/schema\">aaa</pref4:str4></root>");
+			xml = "<root><pref4:str4 xmlns:pref4=\"http://example.com/schema\">aaa</pref4:str4></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str4\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//empty string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><pref4:str4 xmlns:pref4=\"http://example.com/schema\"></pref4:str4></root>");
+			xml = "<root><pref4:str4 xmlns:pref4=\"http://example.com/schema\"></pref4:str4></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str4\":\"\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><pref4:str4 xmlns:pref4=\"http://example.com/schema\"/></root>"));
 			//namespace is declared above
-			o = jsonSchemaForXML.mapXMLToJSON("<root xmlns:pref4=\"http://example.com/schema\"><pref4:str4>aaa</pref4:str4></root>");
+			xml = "<root xmlns:pref4=\"http://example.com/schema\"><pref4:str4>aaa</pref4:str4></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str4\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><pref4:str4 xmlns:pref4=\"http://example.com/schema\">aaa</pref4:str4></root>"));
 
 			//simple string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><pref5:xmlstr5 xmlns:pref5=\"http://example.com/schema\">aaa</pref5:xmlstr5></root>");
+			xml = "<root><pref5:xmlstr5 xmlns:pref5=\"http://example.com/schema\">aaa</pref5:xmlstr5></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str5\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//empty string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><pref5:xmlstr5 xmlns:pref5=\"http://example.com/schema\"></pref5:xmlstr5></root>");
+			xml = "<root><pref5:xmlstr5 xmlns:pref5=\"http://example.com/schema\"></pref5:xmlstr5></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str5\":\"\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><pref5:xmlstr5 xmlns:pref5=\"http://example.com/schema\"/></root>"));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -623,15 +677,24 @@ public class JSONSchemaForXMLTest {
 			d = jsonSchemaForXML.mapJSONToXML(o.toString());
 			assertTrue(XMLComparator.areObjectsEqual(d, "<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><str1>aaa</str1></soap:xmlroot>"));
 			//empty string property
-			o = jsonSchemaForXML.mapXMLToJSON("<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><str1></str1></soap:xmlroot>");
+			xml = "<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><str1></str1></soap:xmlroot>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str1\":\"\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><str1/></soap:xmlroot>"));
 
 			//simple string property
-			o = jsonSchemaForXML.mapXMLToJSON("<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><xmlstr2>aaa</xmlstr2></soap:xmlroot>");
+			xml = "<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><xmlstr2>aaa</xmlstr2></soap:xmlroot>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str2\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//empty string property
-			o = jsonSchemaForXML.mapXMLToJSON("<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><xmlstr2></xmlstr2></soap:xmlroot>");
+			xml = "<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><xmlstr2></xmlstr2></soap:xmlroot>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str2\":\"\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<soap:xmlroot xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><xmlstr2/></soap:xmlroot>"));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -674,12 +737,18 @@ public class JSONSchemaForXMLTest {
 			
 		try {
 			//simple string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root><str0>aaa</str0></root>");
+			xml = "<root><str0>aaa</str0></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str0\":\"aaa\"}")));
-
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
+			
 			//simple string property
-			o = jsonSchemaForXML.mapXMLToJSON("<root str1=\"bbb\"><str0>aaa</str0></root>");
+			xml = "<root str1=\"bbb\"><str0>aaa</str0></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str1\":\"bbb\",\"str0\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//simple string property
 			xml = "<root str1=\"\tbbb\t\"><str0>aaa</str0></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
@@ -732,10 +801,12 @@ public class JSONSchemaForXMLTest {
 			d = jsonSchemaForXML.mapJSONToXML(o.toString());
 			assertTrue(XMLComparator.areObjectsEqual(d, "<root xmlint1=\"123\" xmlstr2=\"bbb\"><str0>aaa</str0></root>"));			
 			//empty string properties
-			o = jsonSchemaForXML.mapXMLToJSON("<root xmlstr2=\"\" xmlint1=\"00012345678901234567890\"><str0></str0></root>");
+			xml = "<root xmlstr2=\"\" xmlint1=\"00012345678901234567890\"><str0></str0></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"int1\":12345678901234567890,\"str2\":\"\",\"str0\":\"\"}")));
 			//string property with spaces, int property with spaces
-			o = jsonSchemaForXML.mapXMLToJSON("<root xmlstr2=\"     \" xmlint1=\"     12345678901234567890     \"><str0>aaa</str0></root>");
+			xml = "<root xmlstr2=\"     \" xmlint1=\"     12345678901234567890     \"><str0>aaa</str0></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"int1\":12345678901234567890,\"str2\":\"\",\"str0\":\"aaa\"}")));
 		}
 		catch(Exception e) {
@@ -768,6 +839,7 @@ public class JSONSchemaForXMLTest {
 			xml = "<root xmlns:pref3=\"http://example.com/schema\" pref3:str3=\"bbb\"><str0>aaa</str0></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"str3\":\"bbb\",\"str0\":\"aaa\"}")));
+			//can not do JSON to XML as pref3 namespace is not defined
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -898,8 +970,11 @@ public class JSONSchemaForXMLTest {
 			assertTrue(XMLComparator.areObjectsEqual(d, "<root><phones1/></root>"));
 			
 			//array item is a simple string
-			o = jsonSchemaForXML.mapXMLToJSON("<root><phones1>p1</phones1></root>");
+			xml = "<root><phones1>p1</phones1></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[\"p1\"]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//array item is a simple string
 			xml = "<root><phones1>p1</phones1><phones1>p2</phones1></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
@@ -915,14 +990,23 @@ public class JSONSchemaForXMLTest {
 			assertTrue(XMLComparator.areObjectsEqual(d, "<root><PHONE_2/></root>"));
 
 			//array item is a simple string
-			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONE_2>p1</PHONE_2></root>");
+			xml = "<root><PHONE_2>p1</PHONE_2></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[\"p1\"],\"arrayOfArrays2\":[],\"phones1\":[]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//array item is a simple string
-			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONE_2>p1</PHONE_2><PHONE_2>p2</PHONE_2></root>");
+			xml = "<root><PHONE_2>p1</PHONE_2><PHONE_2>p2</PHONE_2></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[\"p1\",\"p2\"],\"arrayOfArrays2\":[],\"phones1\":[]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, xml));
 			//array item is a simple string
-			o = jsonSchemaForXML.mapXMLToJSON("<root><PHONE_2>p1</PHONE_2><PHONE_2>p2</PHONE_2><aString>abc</aString></root>");
+			xml = "<root><PHONE_2>p1</PHONE_2><PHONE_2>p2</PHONE_2><aString>abc</aString></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"aString\":\"abc\",\"phones2\":[\"p1\",\"p2\"],\"arrayOfArrays2\":[],\"phones1\":[]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>abc</aString><PHONE_2>p1</PHONE_2><PHONE_2>p2</PHONE_2></root>"));
 			//array item is a simple string
 			xml = "<root><PHONE_2>p1</PHONE_2><aString>abc</aString><PHONE_2>p2</PHONE_2></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
@@ -1196,54 +1280,72 @@ public class JSONSchemaForXMLTest {
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[[1,2,3],[4],[5,6,7,8]],\"phones1\":[]}")));
 			d = jsonSchemaForXML.mapJSONToXML(o.toString());
 			assertTrue(XMLComparator.areObjectsEqual(d, xml));
-			//array item is a simple integers
-			xml = "<root><ARRAY2><INT>1</INT><INT>2</INT><INT>3</INT></ARRAY2><ARRAY2></ARRAY2><ARRAY2><INT>null</INT><INT>6</INT><INT>7</INT><INT>8</INT></ARRAY2></root>";
-			o = jsonSchemaForXML.mapXMLToJSON(xml);
-			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[[1,2,3],[],[null,6,7,8]],\"phones1\":[]}")));
-			d = jsonSchemaForXML.mapJSONToXML(o.toString());
-			assertTrue(XMLComparator.areObjectsEqual(d, "<root><ARRAY2><INT>1</INT><INT>2</INT><INT>3</INT></ARRAY2><ARRAY2/><ARRAY2><INT>null</INT><INT>6</INT><INT>7</INT><INT>8</INT></ARRAY2></root>"));
 
 			//array item is a simple integers
 			xml = "<root><ARRAYS3></ARRAYS3></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays3\":[]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><ARRAYS3/></root>"));
 			//array item is a simple integers
 			xml = "<root><ARRAYS3><ARRAY3></ARRAY3></ARRAYS3></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays3\":[[]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><ARRAYS3><ARRAY3/></ARRAYS3></root>"));
 			//array item is a simple integers
 			xml = "<root><ARRAYS3><ARRAY3><STRING></STRING></ARRAY3></ARRAYS3></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays3\":[[\"\"]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><ARRAYS3><ARRAY3><STRING/></ARRAY3></ARRAYS3></root>"));
 			//array item is a simple integers
 			xml = "<root><ARRAYS3><ARRAY3><STRING>1</STRING><STRING></STRING><STRING>3</STRING></ARRAY3></ARRAYS3></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays3\":[[\"1\",\"\",\"3\"]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><ARRAYS3><ARRAY3><STRING>1</STRING><STRING/><STRING>3</STRING></ARRAY3></ARRAYS3></root>"));
 			
 			xml = "<root><ARRAYS4><ARRAY><ARRAY>1</ARRAY><ARRAY>2</ARRAY><ARRAY>3</ARRAY></ARRAY><ARRAY></ARRAY><ARRAY><ARRAY>5</ARRAY><ARRAY>6</ARRAY><ARRAY>7</ARRAY><ARRAY>8</ARRAY></ARRAY></ARRAYS4></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays4\":[[1,2,3],[],[5,6,7,8]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><ARRAYS4><ARRAY><ARRAY>1</ARRAY><ARRAY>2</ARRAY><ARRAY>3</ARRAY></ARRAY><ARRAY/><ARRAY><ARRAY>5</ARRAY><ARRAY>6</ARRAY><ARRAY>7</ARRAY><ARRAY>8</ARRAY></ARRAY></ARRAYS4></root>"));
 			xml = "<root><ARRAYS5><ARRAYS5><INT>1</INT><INT>2</INT><INT>3</INT></ARRAYS5><ARRAYS5></ARRAYS5><ARRAYS5><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></ARRAYS5></ARRAYS5></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays5\":[[1,2,3],[],[5,6,7,8]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><ARRAYS5><ARRAYS5><INT>1</INT><INT>2</INT><INT>3</INT></ARRAYS5><ARRAYS5/><ARRAYS5><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></ARRAYS5></ARRAYS5></root>"));
 			xml = "<root><ARRAYS6><ARRAYS6><ARRAYS6>1</ARRAYS6><ARRAYS6>2</ARRAYS6><ARRAYS6>3</ARRAYS6></ARRAYS6><ARRAYS6></ARRAYS6><ARRAYS6><ARRAYS6>5</ARRAYS6><ARRAYS6>6</ARRAYS6><ARRAYS6>7</ARRAYS6><ARRAYS6>8</ARRAYS6></ARRAYS6></ARRAYS6></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays6\":[[1,2,3],[],[5,6,7,8]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><ARRAYS6><ARRAYS6><ARRAYS6>1</ARRAYS6><ARRAYS6>2</ARRAYS6><ARRAYS6>3</ARRAYS6></ARRAYS6><ARRAYS6/><ARRAYS6><ARRAYS6>5</ARRAYS6><ARRAYS6>6</ARRAYS6><ARRAYS6>7</ARRAYS6><ARRAYS6>8</ARRAYS6></ARRAYS6></ARRAYS6></root>"));
 			xml = "<root><arrayOfArrays7><ARRAY><INT>1</INT><INT>2</INT><INT>3</INT></ARRAY><ARRAY></ARRAY><ARRAY><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></ARRAY></arrayOfArrays7></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays7\":[[1,2,3],[],[5,6,7,8]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><arrayOfArrays7><ARRAY><INT>1</INT><INT>2</INT><INT>3</INT></ARRAY><ARRAY/><ARRAY><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></ARRAY></arrayOfArrays7></root>"));
 			xml = "<root><arrayOfArrays8><ARRAY><ARRAY>1</ARRAY><ARRAY>2</ARRAY><ARRAY>3</ARRAY></ARRAY><ARRAY></ARRAY><ARRAY><ARRAY>5</ARRAY><ARRAY>6</ARRAY><ARRAY>7</ARRAY><ARRAY>8</ARRAY></ARRAY></arrayOfArrays8></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays8\":[[1,2,3],[],[5,6,7,8]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><arrayOfArrays8><ARRAY><ARRAY>1</ARRAY><ARRAY>2</ARRAY><ARRAY>3</ARRAY></ARRAY><ARRAY/><ARRAY><ARRAY>5</ARRAY><ARRAY>6</ARRAY><ARRAY>7</ARRAY><ARRAY>8</ARRAY></ARRAY></arrayOfArrays8></root>"));
 			xml = "<root><arrayOfArrays9><arrayOfArrays9><INT>1</INT><INT>2</INT><INT>3</INT></arrayOfArrays9><arrayOfArrays9></arrayOfArrays9><arrayOfArrays9><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></arrayOfArrays9></arrayOfArrays9></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays9\":[[1,2,3],[],[5,6,7,8]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><arrayOfArrays9><arrayOfArrays9><INT>1</INT><INT>2</INT><INT>3</INT></arrayOfArrays9><arrayOfArrays9/><arrayOfArrays9><INT>5</INT><INT>6</INT><INT>7</INT><INT>8</INT></arrayOfArrays9></arrayOfArrays9></root>"));
 			xml = "<root><arrayOfArrays10><arrayOfArrays10><arrayOfArrays10>1</arrayOfArrays10><arrayOfArrays10>2</arrayOfArrays10><arrayOfArrays10>3</arrayOfArrays10></arrayOfArrays10><arrayOfArrays10></arrayOfArrays10><arrayOfArrays10><arrayOfArrays10>5</arrayOfArrays10><arrayOfArrays10>6</arrayOfArrays10><arrayOfArrays10>7</arrayOfArrays10><arrayOfArrays10>8</arrayOfArrays10></arrayOfArrays10></arrayOfArrays10></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays10\":[[1,2,3],[],[5,6,7,8]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><arrayOfArrays10><arrayOfArrays10><arrayOfArrays10>1</arrayOfArrays10><arrayOfArrays10>2</arrayOfArrays10><arrayOfArrays10>3</arrayOfArrays10></arrayOfArrays10><arrayOfArrays10/><arrayOfArrays10><arrayOfArrays10>5</arrayOfArrays10><arrayOfArrays10>6</arrayOfArrays10><arrayOfArrays10>7</arrayOfArrays10><arrayOfArrays10>8</arrayOfArrays10></arrayOfArrays10></arrayOfArrays10></root>"));
 			xml = "<root><arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>1</ns1:arrayOfArrays11><ns1:arrayOfArrays11>2</ns1:arrayOfArrays11><ns1:arrayOfArrays11>3</ns1:arrayOfArrays11></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>5</ns1:arrayOfArrays11><ns1:arrayOfArrays11>6</ns1:arrayOfArrays11><ns1:arrayOfArrays11>7</ns1:arrayOfArrays11><ns1:arrayOfArrays11>8</ns1:arrayOfArrays11></ns1:arrayOfArrays11></arrayOfArrays11></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays11\":[[1,2,3],[],[5,6,7,8]]}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>1</ns1:arrayOfArrays11><ns1:arrayOfArrays11>2</ns1:arrayOfArrays11><ns1:arrayOfArrays11>3</ns1:arrayOfArrays11></ns1:arrayOfArrays11><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"/><ns1:arrayOfArrays11 xmlns:ns1=\"http://test.com\"><ns1:arrayOfArrays11>5</ns1:arrayOfArrays11><ns1:arrayOfArrays11>6</ns1:arrayOfArrays11><ns1:arrayOfArrays11>7</ns1:arrayOfArrays11><ns1:arrayOfArrays11>8</ns1:arrayOfArrays11></ns1:arrayOfArrays11></arrayOfArrays11></root>"));
 			xml = "<root><arrayOfArrays12 xmlns:ns2=\"http://test.com\"><arrayOfArrays12><ns2:arrayOfArrays12>1</ns2:arrayOfArrays12><ns2:arrayOfArrays12>2</ns2:arrayOfArrays12><ns2:arrayOfArrays12>3</ns2:arrayOfArrays12></arrayOfArrays12><arrayOfArrays12></arrayOfArrays12><arrayOfArrays12><ns2:arrayOfArrays12>5</ns2:arrayOfArrays12><ns2:arrayOfArrays12>6</ns2:arrayOfArrays12><ns2:arrayOfArrays12>7</ns2:arrayOfArrays12><ns2:arrayOfArrays12>8</ns2:arrayOfArrays12></arrayOfArrays12></arrayOfArrays12></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"relationships\":[],\"phones2\":[],\"arrayOfArrays2\":[],\"phones1\":[],\"arrayOfArrays12\":[[1,2,3],[],[5,6,7,8]]}")));
@@ -1265,7 +1367,17 @@ public class JSONSchemaForXMLTest {
 
 		try {
 			//invalid value in internal array
-			d = jsonSchemaForXML.mapJSONToXML("{\"arrayOfArrays2\":[[1,2,3],[],[null,6,7,[]]]}");
+			d = jsonSchemaForXML.mapJSONToXML("{\"arrayOfArrays2\":[[1,2,3],[],[null,6,7,8]]}");
+			fail("invalid namespace should throw exception");
+		}
+		catch(Exception e) {
+			assertTrue(e.toString().indexOf("Value should not be a null") != -1);
+			assertTrue(e.toString().indexOf("path: $.arrayOfArrays2[2][0]") != -1);			
+		}	
+
+		try {
+			//invalid value in internal array
+			d = jsonSchemaForXML.mapJSONToXML("{\"arrayOfArrays2\":[[1,2,3],[],[5,6,7,[]]]}");
 			fail("invalid namespace should throw exception");
 		}
 		catch(Exception e) {
@@ -1289,7 +1401,7 @@ public class JSONSchemaForXMLTest {
 			fail("invalid namespace should throw exception");
 		}
 		catch(Exception e) {
-			assertTrue(e.toString().indexOf("Value is expected to be a container (array or object)") != -1);
+			assertTrue(e.toString().indexOf("Value should not be a string") != -1);
 			assertTrue(e.toString().indexOf("path: $.arrayOfArrays2[1]") != -1);			
 		}	
 	}
