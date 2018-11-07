@@ -249,6 +249,16 @@ public class JSONSchemaForXMLTest {
 			assertTrue(e.toString().indexOf("Failed to parse JSON input") != -1);
 			assertTrue(e.toString().indexOf("path: $.anObject.str2") != -1);
 		}
+		//json to xml: not an object
+		try {
+			jsonSchemaForXML.mapJSONToXML("123");
+			fail("non object JSON should throw exception");
+		}
+		catch(Exception e) {
+			//ok
+			assertTrue(e.toString().indexOf("JSON input type must an object, starting with {") != -1);
+			assertTrue(e.toString().indexOf("path: $") != -1);
+		}
 
 		try {
 			//empty content

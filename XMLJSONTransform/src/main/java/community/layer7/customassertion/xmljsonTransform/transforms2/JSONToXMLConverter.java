@@ -53,7 +53,7 @@ public class JSONToXMLConverter {
 		}
 		Event e = parser.next(jpath);
 		if(e != Event.START_OBJECT)
-			throw new MapException("Input JSON must of an object, starting with {", jpath.getFullJSONPath());
+			throw new MapException("JSON input type must an object, starting with {", jpath.getFullJSONPath());
 		parseObject(parser, rootElement, rootContainerXMLNodeSpec, "", jpath);
 	}
 	
