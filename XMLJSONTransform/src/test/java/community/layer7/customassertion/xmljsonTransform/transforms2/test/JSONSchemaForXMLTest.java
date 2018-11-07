@@ -69,7 +69,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			//check that json schema parse fails and shows exact location
 			jsonSchemaForXML = new JSONSchemaForXML("{\n   \"a\":\"1\",\n   \"b\": 2,\n   \"c\";\"12\"\n }");
-			fail("garbagge JSON should throw exception");
+			fail("garbage JSON should throw exception");
 		} catch(JSONSchemaLoadException e) {
 			assertTrue(e.toString().indexOf("Failed to parse JSON") != -1);
 			assertTrue(e.toString().indexOf("character 7 line 4") != -1);
@@ -102,7 +102,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			//XML with just spaces
 			jsonSchemaForXML.mapXMLToJSON("    ");
-			fail("garbagge XML should throw exception");
+			fail("garbage XML should throw exception");
 		}
 		catch(MapException e) {
 			//ok
@@ -111,7 +111,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			//XML with no elements
 			jsonSchemaForXML.mapXMLToJSON("asdasd");
-			fail("garbagge XML should throw exception");
+			fail("garbage XML should throw exception");
 		}
 		catch(MapException e) {
 			//ok
@@ -120,7 +120,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			//XML is start root but no end root
 			jsonSchemaForXML.mapXMLToJSON("<root>\n</cd>");
-			fail("garbagge XML should throw exception");
+			fail("garbage XML should throw exception");
 		}
 		catch(MapException e) {
 			//ok
@@ -130,7 +130,7 @@ public class JSONSchemaForXMLTest {
 		try {
 			//XML is start root but no end root
 			jsonSchemaForXML.mapXMLToJSON("<root>");
-			fail("garbagge XML should throw exception");
+			fail("garbage XML should throw exception");
 		}
 		catch(MapException e) {
 			//ok
@@ -176,7 +176,7 @@ public class JSONSchemaForXMLTest {
 		}
 		try {
 			jsonSchemaForXML.mapXMLToJSON("<root><aString>ccc</aString2></root>");
-			fail("garbagge XML should throw exception");
+			fail("garbage XML should throw exception");
 		}
 		catch(MapException e) {
 			//ok
@@ -185,7 +185,7 @@ public class JSONSchemaForXMLTest {
 		}
 		try {
 			jsonSchemaForXML.mapXMLToJSON("<root>< aString >ccc</ aString ></root>");
-			fail("garbagge XML should throw exception");
+			fail("garbage XML should throw exception");
 		}
 		catch(MapException e) {
 			//ok
@@ -194,7 +194,7 @@ public class JSONSchemaForXMLTest {
 		}
 		try {
 			jsonSchemaForXML.mapXMLToJSON("<root><aString>ccc<b></b></aString></root>");
-			fail("garbagge XML should throw exception");
+			fail("garbage XML should throw exception");
 		}
 		catch(MapException e) {
 			//ok
@@ -203,7 +203,7 @@ public class JSONSchemaForXMLTest {
 		}
 		try {
 			jsonSchemaForXML.mapXMLToJSON("<root><aString>aaa</aString>asdad<aNumber>123.456</aNumber></root>");
-			fail("garbagge XML should throw exception");
+			fail("garbage XML should throw exception");
 		}
 		catch(MapException e) {
 			//ok
@@ -213,7 +213,7 @@ public class JSONSchemaForXMLTest {
 		//json to xml: null input
 		try {
 			jsonSchemaForXML.mapJSONToXML(null);
-			fail("garbagge JSON should throw exception");
+			fail("garbage JSON should throw exception");
 		}
 		catch(Exception e) {
 			//ok
@@ -222,27 +222,27 @@ public class JSONSchemaForXMLTest {
 		//json to xml: empty input
 		try {
 			jsonSchemaForXML.mapJSONToXML("");
-			fail("garbagge JSON should throw exception");
+			fail("garbage JSON should throw exception");
 		}
 		catch(Exception e) {
 			//ok
 			assertTrue(e.toString().indexOf("Failed to parse JSON input") != -1);
 			assertTrue(e.toString().indexOf("path: $") != -1);
 		}
-		//json to xml: garbagge json input
+		//json to xml: garbage json input
 		try {
 			jsonSchemaForXML.mapJSONToXML("asdasd");
-			fail("garbagge JSON should throw exception");
+			fail("garbage JSON should throw exception");
 		}
 		catch(Exception e) {
 			//ok
 			assertTrue(e.toString().indexOf("Failed to parse JSON input") != -1);
 			assertTrue(e.toString().indexOf("path: $") != -1);
 		}
-		//json to xml: garbagge json input after a while
+		//json to xml: garbage json input after a while
 		try {
 			jsonSchemaForXML.mapJSONToXML("{\"aNumber\":-123.456,\"aString\":\"aaa\",\"anObject\":{\"str1\":\"one\",\"str2\":two}}");
-			fail("garbagge JSON should throw exception");
+			fail("garbage JSON should throw exception");
 		}
 		catch(Exception e) {
 			//ok
@@ -323,21 +323,36 @@ public class JSONSchemaForXMLTest {
 			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>aaa</aString></root>"));
 
 			//Test XML comment (before element)
-			o = jsonSchemaForXML.mapXMLToJSON("<root><!-- This is a comment --><aString>aaa</aString></root>");
+			xml = "<root><!-- This is a comment --><aString>aaa</aString></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aString\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>aaa</aString></root>"));
 			//Test XML comment (start of element)
-			o = jsonSchemaForXML.mapXMLToJSON("<root><aString><!-- This is a comment -->aaa</aString></root>");
+			xml = "<root><aString><!-- This is a comment -->aaa</aString></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aString\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>aaa</aString></root>"));
 			//Test XML comment (middle of element)
-			o = jsonSchemaForXML.mapXMLToJSON("<root><aString>a<!-- This is a comment -->aa</aString></root>");
+			xml = "<root><aString>a<!-- This is a comment -->aa</aString></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aString\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>aaa</aString></root>"));
 
 			//Test CDATA
-			o = jsonSchemaForXML.mapXMLToJSON("<root><aString><![CDATA[aaa]]></aString></root>");
+			xml = "<root><aString><![CDATA[aaa]]></aString></root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aString\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>aaa</aString></root>"));
 			//Test multi lines
-			o = jsonSchemaForXML.mapXMLToJSON("<root>   \n   \t  \n    <aString>    \n    aaa      \n  \t  \n  </aString>  \n   \n   </root>");
+			xml = "<root>   \n   \t  \n    <aString>    \n    aaa      \n  \t  \n  </aString>  \n   \n   </root>";
+			o = jsonSchemaForXML.mapXMLToJSON(xml);
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aString\":\"aaa\"}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>aaa</aString></root>"));
 			//Test escapes
 			xml = "<root><aString>1\n2\t3&amp;4&quot;5/6\\7</aString></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
@@ -351,6 +366,9 @@ public class JSONSchemaForXMLTest {
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aString\":\"1\\n2\\t3&4 \\n    \\n \\\"5/6\\\\7\"}")));
 			d = jsonSchemaForXML.mapJSONToXML(o.toString());
 			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>1\r\n2\t3&amp;4 \r\n    \r\n \"5/6\\7</aString></root>"));
+			//Test spaces and new lines in JSON input have no impact
+			d = jsonSchemaForXML.mapJSONToXML("    \n\n\t{\"aString\":\"1\\n2\\t3&4 \\n    \\n \\\"5/6\\\\7\"}\n\n\t\n");
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aString>1\r\n2\t3&amp;4 \r\n    \r\n \"5/6\\7</aString></root>"));			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -367,6 +385,8 @@ public class JSONSchemaForXMLTest {
 			//simple aNumber property with spaces and new line
 			o = jsonSchemaForXML.mapXMLToJSON("<root><aNumber>   \n  \t  123.456 \t  \n \t  </aNumber></root>");
 			assertTrue(JSONComparator.areObjectsEqual(o, new JSONObject("{\"aNumber\":123.456}")));
+			d = jsonSchemaForXML.mapJSONToXML(o.toString());
+			assertTrue(XMLComparator.areObjectsEqual(d, "<root><aNumber>123.456</aNumber></root>"));
 			//simple string + number property
 			xml = "<root><aString>aaa</aString><aNumber>123.456</aNumber></root>";
 			o = jsonSchemaForXML.mapXMLToJSON(xml);
