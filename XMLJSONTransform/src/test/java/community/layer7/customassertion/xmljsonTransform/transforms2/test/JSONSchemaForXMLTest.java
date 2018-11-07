@@ -217,7 +217,7 @@ public class JSONSchemaForXMLTest {
 		}
 		catch(Exception e) {
 			//ok
-			assertTrue(e.toString().indexOf("Input JSON is null") != -1);
+			assertTrue(e.toString().indexOf("JSON input is null") != -1);
 		}
 		//json to xml: empty input
 		try {

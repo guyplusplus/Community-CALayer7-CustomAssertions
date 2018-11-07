@@ -23,7 +23,7 @@ public class JSONToXMLConverter {
 
 	public JSONToXMLConverter(String inputJSON, XMLNodeSpecObject rootContainerXMLNodeSpec) throws MapException {
 		if(inputJSON == null)
-			throw new MapException("Input JSON is null");
+			throw new MapException("JSON input is null");
 		if(rootContainerXMLNodeSpec == null)
 			throw new MapException("rootXMLNodeSpec is null");
 		this.inputJSON = inputJSON;
@@ -48,7 +48,7 @@ public class JSONToXMLConverter {
 		JsonParserWrapper parser = null;
 		try {
 			parser = new JsonParserWrapper(Json.createParser(new StringReader(inputJSON)));
-		} catch (Exception e1) {
+		} catch (Exception ex) {
 			throw new MapException("Failed to parse JSON input", jpath.getFullJSONPath());
 		}
 		Event e = parser.next(jpath);
