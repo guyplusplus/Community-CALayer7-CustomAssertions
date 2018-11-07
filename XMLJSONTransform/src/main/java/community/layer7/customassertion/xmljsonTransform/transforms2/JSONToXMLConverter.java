@@ -3,7 +3,6 @@ package community.layer7.customassertion.xmljsonTransform.transforms2;
 import java.io.StringReader;
 
 import javax.json.Json;
-import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,15 +38,20 @@ public class JSONToXMLConverter {
 			docBuilder = docFactory.newDocumentBuilder();
 		} catch (ParserConfigurationException e1) {
 			//should never happen
-			throw new MapException("Internal problem while instanciating DocumentBuilder");
+			throw new MapException("Internal problem while instanciating DocumentBuilder: " + e1);
 		}
 		output = docBuilder.newDocument();
 		output.setXmlStandalone(true);
 		SimplePath jpath = new SimplePath();
 		Element rootElement = createObjectElement(output, rootContainerXMLNodeSpec, JSONSchemaForXML.DEFAULT_XML_ROOT_ELEMENT_NAME, jpath);
 		output.appendChild(rootElement);
-		JsonParser parser = Json.createParser(new StringReader(inputJSON));
-		Event e = parser.next();
+		JsonParserWrapper parser = null;
+		try {
+			parser = new JsonParserWrapper(Json.createParser(new StringReader(inputJSON)));
+		} catch (Exception e1) {
+			throw new MapException("Failed to parse JSON input", jpath.getFullJSONPath());
+		}
+		Event e = parser.next(jpath);
 		if(e != Event.START_OBJECT)
 			throw new MapException("Input JSON must of an object, starting with {", jpath.getFullJSONPath());
 		parseObject(parser, rootElement, rootContainerXMLNodeSpec, "", jpath);
@@ -57,7 +61,7 @@ public class JSONToXMLConverter {
 		return output;
 	}
 	
-	private static void parseArray(JsonParser parser, Element objectElement, XMLNodeSpecArray xmlNodeSpecArray, String currentPropertyName, SimplePath jpath)
+	private static void parseArray(JsonParserWrapper parser, Element objectElement, XMLNodeSpecArray xmlNodeSpecArray, String currentPropertyName, SimplePath jpath)
 		throws MapException {
 		Element targetElement = objectElement; //current objectElement is array is not wrapped or new element to be created bellow
 		String arrayFQElementName = currentPropertyName;
@@ -68,8 +72,8 @@ public class JSONToXMLConverter {
 			targetElement = newArrayElement;
 		}
 		int arrayIndex = 0;
-		while (parser.hasNext()) {
-			Event e = parser.next();
+		while (parser.hasNext(jpath)) {
+			Event e = parser.next(jpath);
 			if(e == Event.START_ARRAY) {
 				jpath.pushIndex(arrayIndex++);
 				if(!(xmlNodeSpecArray.getItemsXMLNodeSpec() instanceof XMLNodeSpecArray))
@@ -98,12 +102,12 @@ public class JSONToXMLConverter {
 		}
 	}
 	
-	private static void parseObject(JsonParser parser, Element objectElement, XMLNodeSpecObject xmlNodeSpecObject, String currentPropertyName, SimplePath jpath)
+	private static void parseObject(JsonParserWrapper parser, Element objectElement, XMLNodeSpecObject xmlNodeSpecObject, String currentPropertyName, SimplePath jpath)
 			throws MapException {
 		String memberKey = null;
 		XMLNodeSpec childXmlNodeSpec = null;
-		while (parser.hasNext()) {
-			Event e = parser.next();
+		while (parser.hasNext(jpath)) {
+			Event e = parser.next(jpath);
 			if(e == Event.START_ARRAY) {
 				if(!(childXmlNodeSpec instanceof XMLNodeSpecArray))
 					throw new MapException("Value should not be a JSON array", jpath.getFullJSONPath());
@@ -122,7 +126,7 @@ public class JSONToXMLConverter {
 				return;
 			}
 			else if(e == Event.KEY_NAME) {
-				memberKey = parser.getString();
+				memberKey = parser.getString(jpath);
 				jpath.pushElement(memberKey);
 				childXmlNodeSpec = xmlNodeSpecObject.getJSONPropertyByName(memberKey);
 				if(childXmlNodeSpec == null)
@@ -136,21 +140,16 @@ public class JSONToXMLConverter {
 		}		
 	}
 	
-	private static String getAndValidateValue(JsonParser parser, Event currentEvent, int nodeType, SimplePath jpath) throws MapException {
+	private static String getAndValidateValue(JsonParserWrapper parser, Event currentEvent, int nodeType, SimplePath jpath) throws MapException {
 		if(currentEvent == Event.VALUE_STRING) {
 			if(nodeType != XMLNodeSpec.TYPE_STRING)
 				throw new MapException("Value should not be a string", jpath.getFullJSONPath());
-			return parser.getString();
+			return parser.getString(jpath);
 		}
 		else if(currentEvent == Event.VALUE_NUMBER) {
 			if(nodeType != XMLNodeSpec.TYPE_NUMBER && nodeType != XMLNodeSpec.TYPE_INTEGER)
 				throw new MapException("Value should not be a number or an integer", jpath.getFullJSONPath());
-			return parser.getString();
-		}
-		else if(currentEvent == Event.VALUE_NULL) {
-			if(nodeType != XMLNodeSpec.TYPE_NULL)
-				throw new MapException("Value should not be a null", jpath.getFullJSONPath());
-			return "null";
+			return parser.getString(jpath);
 		}
 		else if(currentEvent == Event.VALUE_TRUE) {
 			if(nodeType != XMLNodeSpec.TYPE_BOOLEAN)
@@ -161,6 +160,11 @@ public class JSONToXMLConverter {
 			if(nodeType != XMLNodeSpec.TYPE_BOOLEAN)
 				throw new MapException("Value should not be a boolean", jpath.getFullJSONPath());
 			return "false";
+		}
+		else if(currentEvent == Event.VALUE_NULL) {
+			if(nodeType != XMLNodeSpec.TYPE_NULL)
+				throw new MapException("Value should not be a null", jpath.getFullJSONPath());
+			return "null";
 		}
 		//never happens
 		throw new MapException("Internal error", jpath.getFullJSONPath());

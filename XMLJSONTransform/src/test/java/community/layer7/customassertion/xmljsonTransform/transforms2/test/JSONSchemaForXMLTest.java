@@ -210,6 +210,45 @@ public class JSONSchemaForXMLTest {
 			assertTrue(e.toString().indexOf("Characters at this location are not allowed") != -1);
 			assertTrue(e.toString().indexOf("path: /root") != -1);
 		}
+		//json to xml: null input
+		try {
+			jsonSchemaForXML.mapJSONToXML(null);
+			fail("garbagge JSON should throw exception");
+		}
+		catch(Exception e) {
+			//ok
+			assertTrue(e.toString().indexOf("Input JSON is null") != -1);
+		}
+		//json to xml: empty input
+		try {
+			jsonSchemaForXML.mapJSONToXML("");
+			fail("garbagge JSON should throw exception");
+		}
+		catch(Exception e) {
+			//ok
+			assertTrue(e.toString().indexOf("Failed to parse JSON input") != -1);
+			assertTrue(e.toString().indexOf("path: $") != -1);
+		}
+		//json to xml: garbagge json input
+		try {
+			jsonSchemaForXML.mapJSONToXML("asdasd");
+			fail("garbagge JSON should throw exception");
+		}
+		catch(Exception e) {
+			//ok
+			assertTrue(e.toString().indexOf("Failed to parse JSON input") != -1);
+			assertTrue(e.toString().indexOf("path: $") != -1);
+		}
+		//json to xml: garbagge json input after a while
+		try {
+			jsonSchemaForXML.mapJSONToXML("{\"aNumber\":-123.456,\"aString\":\"aaa\",\"anObject\":{\"str1\":\"one\",\"str2\":two}}");
+			fail("garbagge JSON should throw exception");
+		}
+		catch(Exception e) {
+			//ok
+			assertTrue(e.toString().indexOf("Failed to parse JSON input") != -1);
+			assertTrue(e.toString().indexOf("path: $.anObject.str2") != -1);
+		}
 
 		try {
 			//empty content
