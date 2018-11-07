@@ -310,11 +310,6 @@ public class XMLToJSONConverter {
 		if(nodeType == XMLNodeSpec.TYPE_STRING) {
 			return charactersTrimmed;
 		}
-		else if(charactersTrimmed.equalsIgnoreCase("null"))
-			return JSONObject.NULL;
-		else if(nodeType == XMLNodeSpec.TYPE_NULL) {
-			throw new MapException("Failure to convert text to a null", xpath.getFullXMLPath());
-		}
 		else if(nodeType == XMLNodeSpec.TYPE_BOOLEAN) {
 			if(charactersTrimmed.equalsIgnoreCase("true"))
 				 return Boolean.TRUE;
@@ -341,6 +336,11 @@ public class XMLToJSONConverter {
 			} catch (NumberFormatException e) {
 				throw new MapException("Failure to convert text to a number", xpath.getFullXMLPath());
 			}
+		}
+		else if(nodeType == XMLNodeSpec.TYPE_NULL) {
+			if(charactersTrimmed.equalsIgnoreCase("null"))
+				return JSONObject.NULL;
+			throw new MapException("Failure to convert text to a null", xpath.getFullXMLPath());
 		}
 		else
 			throw new MapException("Unknown XMLNodeSpec type " + nodeType, xpath.getFullXMLPath());
