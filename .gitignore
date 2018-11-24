@@ -1,8 +1,0 @@
-
-*.class
-build-common.xml
-build.cmd
-build.sh
-/build.xml
-lib/**
-tools/**
